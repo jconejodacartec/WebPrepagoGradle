@@ -1,0 +1,111 @@
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/ConsultarSaldoBean.java" --><!-- /jsf:pagecode -->
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:portlet="http://java.sun.com/portlet_2_0"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:p1="http://primefaces.org/ui/extensions">
+	
+	
+	<f:event type="preRenderView" listener="#{pc_ConsultarSaldoBean.init}" />
+	
+
+	<h:head>
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="Estilos.css"/>	  
+		<h:outputStylesheet library="css" name="bootstrap.css" />         
+        <h:outputScript library="javascript" name="bootstrap.js" />
+		<h:outputScript library="javascript" name="funciones.js" />	   
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />	
+		
+		<f:facet name="first">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"/>            
+        </f:facet>
+
+		<script language="JavaScript" type="text/javascript">
+			function cargar() {
+				var portletNamespace = "view"
+						+ "#{facesContext.externalContext.response.namespace}";
+				var nombreVariable = portletNamespace + ":consultaTarjetaForm:";
+				var jqxhr = $
+						.getJSON("https://api.ipify.org?format=json",
+								function(data) {
+									document.getElementById(nombreVariable
+											+ "ipValue").value = data.ip;
+								})
+			}
+			window.onload = function() {
+				cargar();
+			}
+		</script>
+	</h:head>
+
+
+	<f:view>
+		<h:body onload="cargar();">
+			<h:form id="consultaTarjetaForm" styleClass="formCosnultarTarjeta">
+				<h:inputHidden id="ipValue" value="#{pc_ConsultarSaldoBean.ip}" />
+			
+				
+				<p:panel id="panelParametrizacion" header="Consultar Saldo">
+					<p:messages id="mensajes" autoUpdate="true" closable="true" />
+					<br />
+
+
+
+					<div id="no-more-tables">
+						<p:dataTable  rowIndexVar="rowId" id="tablaTarjetasPrepago" rowsPerPageTemplate="5,10,15" value="#{pc_ConsultarSaldoBean.listaTarjetas}" var="tarjeta"
+							rows="10" paginator="true" paginatorPosition="bottom" resizableColumns="true" rendered="#{pc_ConsultarSaldoBean.mostrarTabla }"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							styleClass="myTable table-bordered table-striped table-condensed cf">
+							<f:facet name="header">Productos</f:facet>
+
+
+							<p:column headerText="No. Tarjeta" styleClass="num-tarjeta">
+								<p:commandLink id="linkNumTarjeta-#{rowId}" ajax="false" immediate="true" action="#{pc_ConsultarSaldoBean.consultaSaldo(tarjeta)}" onstart="statusDialog.show()" oncomplete="statusDialog.hide()">
+                          			<h:outputText value="#{tarjeta.numeroTarjetaEnmascarado}" />									
+									<p1:tooltip value="Este enlace permite ver los últimos movimientos correspondientes a la tarjeta" forSelector=".myTable tr[role=row][data-ri=#{rowId}] td[class=num-tarjeta]"
+									shared="true" atPosition="top center" myPosition="bottom center" showDelay="500" />
+                        		</p:commandLink>	
+								
+							</p:column>
+							
+							<p:column headerText="Tipo Tarjeta" styleClass="Tipo Tarjeta">
+								<h:outputText value="#{tarjeta.tipoTarjeta}" />
+							</p:column>
+
+							<p:column headerText="Entidad"  styleClass="Entidad">
+								<h:outputText value="#{tarjeta.entidad}" />
+							</p:column>
+
+							<p:column headerText="Nombre Tarjeta"  styleClass="Nombre de Tarjeta">
+								<h:outputText value="#{tarjeta.nombreTarjeta}" />
+							</p:column>
+
+							<p:column headerText="Saldo"  styleClass="Saldo">
+								<h:outputText value="$ #{tarjeta.saldoFormatoDecimal}" />
+							</p:column>
+
+							<p:column headerText="Estado" styleClass="Estado">
+								<h:outputText value="#{tarjeta.estado}" />
+							</p:column>
+							
+							<p:column headerText="Bolsillo" styleClass="Bolsillo">
+								<h:outputText value="#{tarjeta.bolsillo}" />
+							</p:column>
+
+						</p:dataTable>
+
+					</div>
+				</p:panel>
+			</h:form>
+			<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    	<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+			</p:dialog>
+		</h:body>
+	</f:view>
+
+
+</div>
+

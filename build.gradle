@@ -1,0 +1,155 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+apply plugin: 'maven-publish'
+apply plugin: 'eclipse'
+apply plugin: 'war'
+apply plugin: 'org.sonarqube'
+
+group = 'rbmangular'
+version = '1.0.0'
+description = "WebPrepago"
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+war {
+
+	archiveName ('WebPrepago.war')
+
+    duplicatesStrategy = 'exclude'
+
+    from ("src/main/java/com/rbm/web/prepago/portlets/nl") {
+
+        include '*.properties'
+    
+        into ('WEB-INF/classes/com/rbm/web/prepago/portlets/nl')
+
+    }
+
+}
+
+tasks.withType(JavaCompile) {
+	options.encoding = 'UTF-8'
+	if (System.getProperty('DEBUG', 'false') == 'true') {
+        jvmArgs '-Xdebug', '-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=9099'
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+}
+
+publishing {
+
+    repositories {
+        maven {
+            // change to point to your repo, e.g. http://my.org/repo
+            //url "http://localhost:8081/nexus/content/repositories/ServerDepedencies/"
+        }
+    }
+}
+
+repositories {
+    maven { url "http://169.62.147.230:6996/nexus/content/repositories/Redeban/" } 
+    maven { url "https://public.dhe.ibm.com/ibmdl/export/pub/software/websphere/wasdev/maven/repository/" }
+    maven { url "https://repo.maven.apache.org/maven2" }
+	mavenCentral()
+    //mavenLocal()  
+    jcenter()
+}
+
+
+dependencies {
+
+    testImplementation 'junit:junit:4.12'
+
+	//APLICACIONES COMUNES REPOSITORIO 
+    
+   /* compile (group: 'Comunes', name: 'AdministradorUsuariosLdap', version: '1.3') { transitive = false }
+    compile (group: 'Comunes', name: 'AuditHandlerLib', version: '1.1') { transitive = false }
+    compile (group: 'Comunes', name: 'EhCache', version: '1.1') { transitive = false }
+	compile (group: 'Comunes', name: 'GeneradorCorreo', version: '1.1') { transitive = false }
+    compile (group: 'Comunes', name: 'GestorReportes', version: '1.1') { transitive = false }
+    compile (group: 'Comunes', name: 'LogHandlerClient', version: '1.1') { transitive = false }
+    compile (group: 'Comunes', name: 'LogHandlerLib', version: '1.1') { transitive = false }
+    providedCompile (group: 'Comunes', name: 'UtilidadesGlobalPay', version: '1.1') { transitive = false }
+    compile (group: 'Comunes', name: 'UtilidadesIBM', version: '1.1') { transitive = false }*/
+
+    //REPOSITORIO MVN
+
+   /* compile (group: 'commons-beanutils', name: 'commons-beanutils', version: '1.8.3') { transitive = false }
+    compile (group: 'commons-codec', name: 'commons-codec', version: '1.10') { transitive = false }
+    compile (group: 'commons-collections', name: 'commons-collections', version: '3.2.1') { transitive = false }
+    compile (group: 'commons-digester', name: 'commons-digester', version: '2.1') { transitive = false }
+    compile (group: 'commons-io', name: 'commons-io', version: '2.4') { transitive = false }
+    compile (group: 'org.apache.commons', name: 'commons-jci-fam', version: '1.0') { transitive = false }
+    compile (group: 'org.apache.commons', name: 'commons-jexl', version: '2.1.1') { transitive = false }
+    compile (group: 'org.apache.commons', name: 'commons-lang3', version: '3.1') { transitive = false }
+    compile (group: 'commons-pool', name: 'commons-pool', version: '1.6') { transitive = false }
+    compile (group: 'org.apache.mina', name: 'mina-core', version: '2.0.7') { transitive = false }
+    compile (group: 'com.octo.captcha', name: 'jcaptcha-api', version: '1.0') { transitive = false }
+    compile (group: 'com.jhlabs', name: 'filters', version: '2.0.235') { transitive = false }*/
+
+
+    //LIBRERIAS SERVIDOR PORTAL9 REPOSITORIO
+
+   /* providedCompile (group: 'LibreriasPortal9', name: 'j2ee', version: '6.0') { transitive = false }
+    providedCompile (group: 'LibreriasPortal9', name: 'com.ibm.ws.runtime', version: '1.1') { transitive = false }
+    providedCompile (group: 'LibreriasPortal9', name: 'com.ibm.ws.batch.runtime', version: '1.1') { transitive = false }
+    providedCompile (group: 'LibreriasPortal9', name: 'com.ibm.ws.prereq.jsfportlet', version: '1.1') { transitive = false }
+    providedCompile (group: 'LibreriasPortal9', name: 'portletapi_10', version: '1.1') { transitive = false }
+    providedCompile (group: 'LibreriasPortal9', name: 'portletapi_20', version: '1.1') { transitive = false }*/
+
+    //LIBRERIAS COMPARTIDAS REPOSITORIO
+
+    /*compile (group: 'LibreriasCompartidas', name: 'api-all', version: '1.0.0') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'commons-fileupload', version: '1.3.1') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'commons-lang', version: '2.4') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'ehcache', version: '2.7.3') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'hot-sneaks', version: '1.0.10') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'jcaptcha', version: '2.0') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'jstl', version: '1.1') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'jcaptcha-integration-simple-servlet', version: '2.0') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'jxls-core', version: '1.0.2') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'logback-classic', version: '1.0.13') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'logback-core', version: '1.0.13') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'ojdbc6', version: '1.1') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'poi', version: '3.9') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'poi-ooxml', version: '3.9') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'Pojomatic', version: '1.0') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'primefaces', version: '3.5') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'primefaces-extensions', version: '1.0') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'simplecaptcha', version: '1.2.1') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'slf4j-api', version: '1.7.5') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'standard', version: '1.1') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'velocity', version: '1.7') { transitive = false }
+    compile (group: 'LibreriasCompartidas', name: 'quartz', version: '2.2.1') { transitive = false }*/
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    //implementation group: 'com.octo.captcha', name: 'jcaptcha', version: '1.0'
+    //implementation 'com.octo.captcha:jcaptcha:1.0'
+      	 
+    
+}
+
+buildscript {
+
+    repositories {
+        maven { url "https://plugins.gradle.org/m2/" }
+ }
+    dependencies { classpath "org.sonarsource.scanner.gradle:sonarqube-gradle-plugin:2.8" }
+}
+
+sonarqube {
+
+   properties {
+
+       property "sonar.host.u rl", "http://169.62.147.230"
+       property "sonar.login", "6a7a038834fee880a69d1c0f2664bbe74cf56c8c"
+       property "sonar.projectBaseDir", "$project.projectDir/../.." //Until issue is resolved: https://jira.sonarsource.com/browse/SONARGRADL-48
+
+   }
+}

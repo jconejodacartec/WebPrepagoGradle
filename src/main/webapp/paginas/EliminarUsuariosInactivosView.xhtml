@@ -1,0 +1,466 @@
+
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/EliminarUsuariosInactivosBean.java" --><!-- /jsf:pagecode -->
+
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:portlet="http://java.sun.com/portlet_2_0"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pe="http://primefaces.org/ui/extensions">
+
+	<h:head>
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+		<meta http-equiv="Content-Type"
+			content="application/xhtml+xml; charset=UTF-8" />
+		<h:outputStylesheet library="css" name="Estilos.css" />
+		<h:outputStylesheet library="css" name="bootstrap.css" />
+		<h:outputScript library="javascript" name="bootstrap.js" />
+		<h:outputScript library="javascript" name="funciones.js" />
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />
+
+		<f:facet name="first">
+			<meta name="viewport"
+				content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+		</f:facet>
+		<h:outputScript id="utils" library="javascript" name="utils.js" />
+
+
+		<script language="JavaScript" type="text/javascript">
+			function cargar() {
+				var portletNamespace = "view"
+						+ "#{facesContext.externalContext.response.namespace}";
+				var nombreVariable = portletNamespace
+						+ ":eliminarUsuariosForm:";
+
+				var jqxhr = $
+						.getJSON("https://api.ipify.org?format=json",
+								function(data) {
+									document.getElementById(nombreVariable
+											+ "ipValue").value = data.ip;
+								})
+
+				// 				document.getElementById(nombreVariable+"numCelular").setAttribute("autocomplete", "off");
+			}
+			window.onload = function() {
+				cargar();
+			}
+		</script>
+
+		<meta http-equiv="Content-Type"
+			content="application/xhtml+xml; charset=UTF-8" />
+	</h:head>
+
+
+	<f:view>
+		<h:body onload="cargar();">
+			<h:form id="eliminarUsuariosForm" style="width: 1000px;">
+				<div id="overlay" />
+				<h:inputHidden id="ipValue"
+					value="#{pc_EliminarUsuariosInactivosBean.ip}" />
+				<p:panel id="PanelRegistro"
+					header="Eliminación por Información Errada" style="width: 100%;">
+					<p:messages id="mensajes" closable="true" autoUpdate="true"
+						globalOnly="true" />
+
+					<p:outputPanel id="panelTipoDepuracion">
+						<h:panelGrid columns="2"
+							style="width: 70%; margin: 10px 0px 10px 0px;">
+							<h:outputLabel value="Tipo de Depuración: *" />
+							<h:selectOneMenu id="selectTipoDepuracion" style="width: 100%;"
+								value="#{pc_EliminarUsuariosInactivosBean.tipoDepuracionSelected}">
+								<f:selectItem itemValue="" itemLabel="Seleccione uno" />
+								<f:selectItem itemValue="1" itemLabel="Inactividad" />
+								<f:selectItem itemValue="2" itemLabel="Información Errada" />
+								<p:ajax
+									listener="#{pc_EliminarUsuariosInactivosBean.onTipoDepuracionChange}"
+									update="mensajes panelBtnVolver consultaInfoErr panelInfoErronea panelUsuariosInactivos panelFiltroInac panelTipoDepuracion" oncomplete="statusDialog.hide()"
+									onstart="statusDialog.show()" process="@this" event="valueChange"/>
+								<pe:tooltip for="selectTipoDepuracion"
+									value="Seleccione un tipo de depuración" />
+							</h:selectOneMenu>
+						</h:panelGrid>
+						<h:panelGrid id="panelFiltroInac" columns="3" style="width: 86%; margin: 10px 0px 10px 0px;" rendered="#{pc_EliminarUsuariosInactivosBean.mostrarFiltroInactividad}">
+							<h:outputLabel value="Número días inactividad : " />
+							<p:inputText id="nDiasInactivo" value="#{pc_EliminarUsuariosInactivosBean.diasInactividad}" maxlength="3" />
+							<p:commandButton id="filtrarDias" style="right: 76px;" value="Consultar" actionListener="#{pc_EliminarUsuariosInactivosBean.filtrarDiasInac}"
+							 update="panelUsuariosInactivos mensajes" oncomplete="statusDialog.hide()" onstart="statusDialog.show()"></p:commandButton>
+						</h:panelGrid>
+					</p:outputPanel>
+					<p:outputPanel id="consultaInfoErr">
+						<h:panelGrid columns="2"
+							style="width: 85%; margin: 10px 0px 10px 0px;"
+							rendered="#{pc_EliminarUsuariosInactivosBean.mostrarPanelConsulta}">
+							<h:outputLabel value="Usuario : *"
+								style=" margin: 5px 0px 5px 0px;" />
+							<h:inputText id="idUsuario"
+								value="#{pc_EliminarUsuariosInactivosBean.campoIdUsuario}"
+								style="width: 45%; margin: 5px 0px 5px 0px;" maxlength="12">
+								<pe:tooltip for="idUsuario"
+									value="Ingrese el usuario que desea buscar, puede usar el carácter asterisco (*) como comodín para la búsqueda"></pe:tooltip>
+								<pe:keyFilter regEx="/[a-z0-9*\s]/i" />
+							</h:inputText>
+
+							<h:outputLabel value="Número de Tarjeta : *"
+								style=" margin: 5px 0px 5px 0px;" />
+							<h:inputText id="NumTarjetaId"
+								value="#{pc_EliminarUsuariosInactivosBean.campoNumTarjera}"
+								style="width: 45%; margin: 5px 0px 5px 0px;" maxlength="19">
+								<pe:tooltip for="NumTarjetaId"
+									value="Ingrese el número de tarjeta que desea buscar, puede usar el carácter asterisco (*) como comodín para la búsqueda"></pe:tooltip>
+								<pe:keyFilter regEx="/[a-z0-9*\s]/i" />
+							</h:inputText>
+
+							<p:outputLabel value="Fecha de Registro :"
+								style=" margin: 5px 0px 5px 0px;" />
+							<p:calendar id="FechaRegistro" showOn="button"
+								value="#{pc_EliminarUsuariosInactivosBean.campoFechaRegistro}"
+								effect="fold" pattern="dd/MM/yyyy"
+								style="margin: 5px 0px 5px 0px;">
+								<pe:tooltip for="FechaRegistro"
+									value="Seleccione la fecha de registro del usuario al sistema"></pe:tooltip>
+							</p:calendar>
+						</h:panelGrid>
+						<p:commandButton id="botonConsultar" value="Consultar"
+							actionListener="#{pc_EliminarUsuariosInactivosBean.consultarInfoErronea}"
+							rendered="#{pc_EliminarUsuariosInactivosBean.mostrarPanelConsulta}"
+							update="panelInfoErronea mensajes"
+							style=" margin: 5px 0px 5px 0px;"
+							onstart="statusDialog.show()" oncomplete="statusDialog.hide()" />
+
+					</p:outputPanel>
+
+					<br></br>
+
+					<p:outputPanel id="panelInfoErronea">
+						<p:dataTable id="depuracionInformacionErrada" var="resultado"
+							value="#{pc_EliminarUsuariosInactivosBean.listaUsuariosInfoErrada}"
+							scrollable="true"
+							rendered="#{pc_EliminarUsuariosInactivosBean.mostrartablaUsuariosInfoErr}"
+							styleClass="myTable table-bordered table-striped table-condensed cf"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							resizableColumns="true" paginatorPosition="bottom" rows="#{pc_EliminarUsuariosInactivosBean.filas}"
+							paginator="true" rowsPerPageTemplate="5,10,15"
+							emptyMessage="No existen registros para esta consulta">
+							<p:ajax event="page" listener="#{pc_EliminarUsuariosInactivosBean.onPageChange}"></p:ajax>
+
+							<f:facet name="header">
+								<h:outputText value="Listado de usuarios con información errada"
+									styleClass="Listado de usuarios con información errada"
+									style="font-size: 1.5em;" />
+								<h:outputText style="font-size: 1.5em;">
+								</h:outputText>
+							</f:facet>
+
+							<p:column id="columnUsuario"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Usuario">
+								<f:facet name="header">
+									<h:outputText value="Usuario" />
+								</f:facet>
+								<h:outputText value="#{resultado.usuario}" />
+							</p:column>
+
+							<p:column headerText="Número &lt;br /&gt; Tarjeta"
+								id="columnNumTarjeta"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Número de Tarjeta">
+								<h:outputText value="#{resultado.numTarjetaEnmascarado}" />
+
+							</p:column>
+
+							<p:column headerText="Eliminar &lt;br /&gt; Tarjeta"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Eliminar Tarjeta">
+								<p:commandLink process="@this" immediate="true"
+									actionListener="#{pc_EliminarUsuariosInactivosBean.eliminarTarjeta(resultado)}"
+									oncomplete="confirmacionEliminarTarjetaVar.show()"
+									update=":eliminarUsuariosForm:confirmacionEliminarTarjeta">
+									<p:graphicImage value="resoruces/imagenes/Close.png"
+										library="imagenes" name="papelera.png" style="width:20px" />
+								</p:commandLink>
+								<pe:tooltip forSelector=".Eliminar a"
+									value="Clic para  eliminar una tarjeta" />
+							</p:column>
+
+							<p:column id="columnEntidad"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Entidad">
+								<f:facet name="header">
+									<h:outputText value="Entidad" />
+								</f:facet>
+								<h:outputText value="#{resultado.entidad}" />
+							</p:column>
+
+
+							<p:column headerText="Fecha Registro &lt;br /&gt; (DD/MM/AAAA)"
+								id="columnFechaRegistro" style="text-align: center;"
+								styleClass="Fecha Notificacion">
+								<h:outputText value="#{resultado.fechaRegistro}" />
+							</p:column>
+
+							<p:column headerText="Eliminar"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Eliminar">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:selectBooleanCheckbox value="#{resultado.eliminar}" />
+							</p:column>
+
+							<p:column headerText="Notificar"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Notificar">
+								<f:facet name="header">
+									<h:outputText value="Notificar y Eliminar" />
+								</f:facet>
+								<p:selectBooleanCheckbox value="#{resultado.eliminarYnotificar}" />
+							</p:column>
+
+						</p:dataTable>
+						<br></br>
+						<p:commandButton id="botonProcesar" value="Procesar"
+							rendered="#{pc_EliminarUsuariosInactivosBean.mostrartablaUsuariosInfoErr}"
+							actionListener="#{pc_EliminarUsuariosInactivosBean.eliminarUsuInfoErr}"
+							update="confirmacionEliminarPorInfoErrada mensajes"
+							onstart="statusDialog.show()" oncomplete="statusDialog.hide()" />
+					</p:outputPanel>
+
+					<p:confirmDialog global="true" id="confirmacionEliminar"
+						closeOnEscape="false" closable="false" resizable="false"
+						widgetVar="confirmacionEliminarVar"
+						header="Confirmación de eliminación de usuarios por inactividad"
+						message="Se eliminará(n) #{pc_EliminarUsuariosInactivosBean.numUsuariosEliminar} usuario(s) del sistema MovTrxPrepago Web por Inactividad. ¿Desea continuar?">
+
+
+						<div align="center">
+							<p:panelGrid id="displayConfirmacion" columns="2"
+								styleClass="noBorders">
+								<p:commandButton value="Si" id="confirmarCambios" actionListener="#{pc_EliminarUsuariosInactivosBean.eliminarInactivos}"
+									immediate="true" update="mensajes panelUsuariosInactivos" oncomplete="confirmacionEliminarVar.hide(); statusDialog.hide()"
+									onstart="statusDialog.show()">
+									<pe:tooltip for="confirmarCambios"
+										value="Clic para confirmar la eliminación del usuario."
+										></pe:tooltip>
+								</p:commandButton>
+								<p:commandButton value="No" id="deshacerCambios"
+									onclick="confirmacionEliminarVar.hide()">
+									<pe:tooltip for="deshacerCambios"
+										value="Clic para cancelar la eliminación de usuarios."></pe:tooltip>
+								</p:commandButton>
+							</p:panelGrid>
+						</div>
+					</p:confirmDialog>
+
+					<p:confirmDialog global="true"
+						id="confirmacionEliminarPorInfoErrada" closeOnEscape="false"
+						closable="false" resizable="false"
+						widgetVar="confirmacionEliminarInfoErradaVar"
+						header="Confirmación de eliminación de usuarios por información errada"
+						message="Se eliminará(n) #{pc_EliminarUsuariosInactivosBean.numUsuariosEliminar} usuario(s) del sistema MovTrxPrepago Web por Información Errada. ¿Desea continuar?">
+
+						<div class="row">
+							<h:outputLabel value="Causal :"
+								styleClass="col-xs-12 col-sm-4 col-md-4 col-lg-4"
+								rendered="#{pc_EliminarUsuariosInactivosBean.mostrarCausal}" />
+							<p:inputTextarea
+								value="#{pc_EliminarUsuariosInactivosBean.mensajeCausal}"
+								styleClass="col-xs-12 col-sm-7 col-md-7 col-lg-7"
+								rendered="#{pc_EliminarUsuariosInactivosBean.mostrarCausal}">
+							</p:inputTextarea>
+						</div>
+						<div align="center">
+							<p:panelGrid id="displayConfirmacionInfoErrada" columns="2"
+								styleClass="noBorders">
+								<p:commandButton value="Si" id="confirmarCambiosInfo"
+									update="mensajes panelInfoErronea"
+									actionListener="#{pc_EliminarUsuariosInactivosBean.confirmarEliminarUsuInfoErr}"
+									oncomplete="confirmacionEliminarInfoErradaVar.hide(); statusDialog.hide()" onstart="statusDialog.show()">
+									<pe:tooltip for="confirmarCambiosInfo"
+										value="Clic para confirmar la eliminación." />
+								</p:commandButton>
+								<p:commandButton value="No" id="deshacerCambiosInfo"
+									onclick="confirmacionEliminarInfoErradaVar.hide()">
+									<pe:tooltip for="deshacerCambiosInfo"
+										value="Clic para cancelar la eliminación de usuarios." />
+								</p:commandButton>
+							</p:panelGrid>
+						</div>
+					</p:confirmDialog>
+
+					<p:confirmDialog global="true" id="confirmacionEliminarTarjeta"
+						closeOnEscape="false" closable="false" resizable="false"
+						widgetVar="confirmacionEliminarTarjetaVar"
+						header="Confirmación de eliminación de suscripción"
+						message="“¿Está seguro de eliminar la inscripción de la tarjeta [#{pc_EliminarUsuariosInactivosBean.numeroTarEliminar}] sobre el sistema Mov. TrxPrepago Web?">
+
+						<div align="center">
+							<p:panelGrid id="displayConfirmacionTarjeta" columns="2"
+								styleClass="noBorders">
+								<p:commandButton value="Si" id="confirmarCambiosTarjeta"
+									immediate="true" update="mensajes panelInfoErronea"
+									actionListener="#{pc_EliminarUsuariosInactivosBean.confirmarEliminarTarjeta}"
+									oncomplete="confirmacionEliminarTarjetaVar.hide(); statusDialog.hide()" onstart="statusDialog.show()">
+									<pe:tooltip for="confirmarCambiosTarjeta"
+										value="Clic para confirmar la eliminación de la tarjeta."></pe:tooltip>
+								</p:commandButton>
+								<p:commandButton value="No" id="deshacerCambiosTarjeta"
+									onclick="confirmacionEliminarTarjetaVar.hide()">
+									<pe:tooltip for="deshacerCambiosTarjeta"
+										value="Clic para cancelar la eliminación de la tarjeta."></pe:tooltip>
+								</p:commandButton>
+							</p:panelGrid>
+						</div>
+					</p:confirmDialog>
+
+				</p:panel>
+
+
+				<p:outputPanel id="panelUsuariosInactivos">
+					<p:panel id="panelInactivos"
+						header="Notificación y Eliminación de Usuarios Inactivos"
+						style="width: 100%;"
+						rendered="#{pc_EliminarUsuariosInactivosBean.mostrarPanelUsuInactivos}">
+						<p:commandButton id="selEliminar" style="width: 15%; left:660px;"
+							value="Seleccionar todo Eliminar"
+							rendered="#{pc_EliminarUsuariosInactivosBean.botonesSelec}" onclick="confirmarSelec.show()" 
+							actionListener="#{pc_EliminarUsuariosInactivosBean.asignarOp(true)}" >
+						</p:commandButton>
+						<p:commandButton id="selNotificar" style="width: 15%; left:670px;" 
+							value="Seleccionar todo Notificar" 
+							rendered="#{pc_EliminarUsuariosInactivosBean.botonesSelec}" onclick="confirmarSelec.show()" 
+							actionListener="#{pc_EliminarUsuariosInactivosBean.asignarOp(false)}" >
+						</p:commandButton>
+						<p:dataTable id="usuariosInactivos" var="resultado"
+							value="#{pc_EliminarUsuariosInactivosBean.usuarios}"
+							scrollable="true" rendered="true"
+							styleClass="myTable table-bordered table-striped table-condensed cf"
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+							resizableColumns="true" paginatorPosition="bottom" rows="#{pc_EliminarUsuariosInactivosBean.rowsPerPage}"
+							paginator="true" rowsPerPageTemplate="5,10,15">
+							<p:ajax event="page" listener="#{pc_EliminarUsuariosInactivosBean.page}"></p:ajax>
+							<f:facet name="header">
+								<h:outputText value="Listado Usuarios Inactivos"
+									styleClass="Listado Usuarios Inactivos"
+									style="font-size: 1.5em;" />
+								<h:outputText style="font-size: 1.5em;">
+								</h:outputText>
+							</f:facet>
+
+							<p:column id="columnUsuario" style="text-align: center;"
+								styleClass="Usuario">
+								<f:facet name="header">
+									<h:outputText value="Usuario" />
+								</f:facet>
+								<h:outputText value="#{resultado.usuario}" />
+							</p:column>
+
+							<p:column id="columnFechaCreacion"
+								headerText="Fecha Creacion &lt;br /&gt; (DD/MM/AAAA)"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Fecha Creacion">
+								<h:outputText value="#{resultado.fechaCreacion}" />
+							</p:column>
+
+
+							<p:column id="columnTiempoInactividad"
+								headerText="Tiempo Inactividad &lt;br /&gt; (días)"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Tiempo Inactividad">
+								<h:outputText value="#{resultado.tiempoInactividad}" />
+							</p:column>
+
+							<p:column id="columnFechaNotificacion"
+								headerText="Fecha Notificacion &lt;br /&gt; (DD/MM/AAAA)"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Fecha Notificacion">
+								<h:outputText value="#{resultado.fechaNotificacion}" />
+							</p:column>
+
+							<p:column id="columnFechaUltimaActividad"
+								headerText="Fecha Última Actividad &lt;br /&gt; (DD/MM/AAAA)"
+								style="word-wrap: break-word; text-align: center;"
+								styleClass="Fecha Notificacion">
+								<h:outputText value="#{resultado.fechaUltimaConexion}" />
+							</p:column>
+
+							<p:column headerText="Eliminar"
+								style=" word-wrap: break-word;text-align:center"
+								styleClass="Eliminar">
+								<f:facet name="header">
+									<h:outputText value="Eliminar" />
+								</f:facet>
+								<p:selectBooleanCheckbox value="#{resultado.eliminar}"
+									disabled="#{resultado.deshabilitarEliminar}" />
+							</p:column>
+
+							<p:column headerText="Notificar"
+								style=" word-wrap: break-word;text-align:center"
+								styleClass="Notificar">
+								<f:facet name="header">
+									<h:outputText value="Notificar" />
+								</f:facet>
+								<p:selectBooleanCheckbox value="#{resultado.notificar}"
+									disabled="#{resultado.deshabilitarNotificar}" />
+							</p:column>
+
+						</p:dataTable>
+
+						<br />
+						<h:panelGrid id="confCorreo" columns="2" style="width: 90%; margin: 10px 0px 10px 0px;" rendered="#{pc_EliminarUsuariosInactivosBean.mostrarFiltroInactividad}">
+							<h:outputLabel value="Correo electrónico envío usuarios eliminados o notificados : *" />
+							<p:inputText id="nConfCorreo" value="#{pc_EliminarUsuariosInactivosBean.correosNotficar}" />
+						</h:panelGrid>
+						<br />
+
+						<p:commandButton id="botonEliminar" value="Eliminar"
+							actionListener="#{pc_EliminarUsuariosInactivosBean.listaUsuariosEliminar}"
+							update="mensajes confirmacionEliminar" onstart="statusDialog.show()" oncomplete="statusDialog.hide()">
+							<pe:tooltip for="botonEliminar"
+								value="Clic para eliminar los usuarios seleccionados"></pe:tooltip>
+						</p:commandButton>
+						<p:commandButton id="botonNotificar" value="Notificar"
+							action="#{pc_EliminarUsuariosInactivosBean.notificarInactividad}"
+							update="mensajes panelUsuariosInactivos" onstart="statusDialog.show()" oncomplete="statusDialog.hide()">
+							<pe:tooltip for="botonNotificar"
+								value="Clic para notificar a los usuarios seleccionados la inactividad en el sistema"></pe:tooltip>
+						</p:commandButton>
+
+					</p:panel>
+				</p:outputPanel>
+				<p:confirmDialog id="confirmarSelec" header="Seleccionar todo" widgetVar="confirmarSelec"
+					closeOnEscape="false" closable="false" resizable="false" 
+					message="¿Seleccionar todos los registros de la página actual?">
+					<div align="center">
+						<p:panelGrid id="displayConfSelect" columns="3"
+							styleClass="noBorders">
+							<p:commandButton id="selecSi" style="width:100%;" value="Si" 
+								actionListener="#{pc_EliminarUsuariosInactivosBean.seleccionarTodos(true)}" update="panelUsuariosInactivos" onclick="confirmarSelec.hide()"
+								onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+							<p:commandButton id="selecTodo" style="width:70%;left:40px;" value="Seleccionar todas las páginas"
+								 actionListener="#{pc_EliminarUsuariosInactivosBean.seleccionarTodos(false)}" update="panelUsuariosInactivos" onclick="confirmarSelec.hide()"
+								 onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+							<p:commandButton id="SelecCancel"  style="width:100%;" value="Cancelar" onclick="confirmarSelec.hide()"/>
+						</p:panelGrid>
+					</div>
+				</p:confirmDialog>
+
+				<p:outputPanel id="panelBtnVolver">
+					<p:commandButton id="botonVolver"
+						actionListener="#{pc_EliminarUsuariosInactivosBean.botonVolver}"
+						value="Volver" style="float: right"
+						rendered="#{pc_EliminarUsuariosInactivosBean.mostrarBotonVolver}"
+						update="panelBtnVolver consultaInfoErr panelInfoErronea panelUsuariosInactivos selectTipoDepuracion panelTipoDepuracion"
+						onstart="statusDialog.show()" oncomplete="statusDialog.hide()" />
+				</p:outputPanel>
+			
+			</h:form>
+			<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    	<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+			</p:dialog>
+
+		</h:body>
+	</f:view>
+
+
+</div>
+

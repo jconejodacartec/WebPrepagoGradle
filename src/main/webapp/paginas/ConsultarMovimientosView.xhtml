@@ -1,0 +1,223 @@
+<!-- jsf:pagecode language="java" location="src/com/rbm/web/prepago/managedBeans/ConsultarMovimientosBean.java" --><!-- /jsf:pagecode -->
+<!-- jsf:pagecode language="java" location="src/com/rbm/web/prepago/managedBeans/ConsultarMovimientosBean.java" --><!-- /jsf:pagecode -->
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:portlet="http://java.sun.com/portlet_2_0"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:p1="http://primefaces.org/ui/extensions">
+
+	<f:event type="preRenderView" listener="#{pc_ConsultarMovimientosBean.obtenerTarjetas}" />
+
+	<h:head>
+
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+		<meta http-equiv="Content-Type"
+			content="application/xhtml+xml; charset=UTF-8" />
+		<h:outputStylesheet library="css" name="Estilos.css" />
+		<h:outputStylesheet library="css" name="bootstrap.css" />
+		<h:outputScript library="javascript" name="bootstrap.js" />
+		<h:outputScript library="javascript" name="funciones.js" />
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />
+
+		<f:facet name="first">
+			<meta name="viewport"
+				content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+		</f:facet>
+		<script language="JavaScript" type="text/javascript">
+			function cargar() {
+				var portletNamespace = "view"+ "#{facesContext.externalContext.response.namespace}";
+				var nombreVariable = portletNamespace+ ":registroUsuariosForm:";
+				var jqxhr = $.getJSON("https://api.ipify.org?format=json",function(data) {
+				document.getElementById(nombreVariable+ "ipValue").value = data.ip;})
+
+			}
+			window.onload = function() {
+				cargar();
+			}
+		</script>
+
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+	</h:head>
+
+
+
+	<f:view>
+		<h:body onload="cargar();">
+			<h:form id="formularioConsulta" styleClass="formularioConsultaStyle">
+				<h:inputHidden id="ipValue" value="#{pc_ConsultarMovimientosBean.ip}" />
+				<p:messages autoUpdate="true" closable="true" />
+				<portlet:resourceURL id="ReporteExcelMovimientos" var="resourceURL"/>
+				<portlet:resourceURL id="ReportePDFMovimientos" var="resourceURLPDF"/>
+				
+				<p:panel id="panelGeneral" header="Consultar Movimientos">
+
+
+					<div style="border: 1px solid #aaaaaa; border-radius: 4px;" >
+					
+						<div class="col-xs-12 col-sm-5 col-md-5 col-lg-5">
+						
+							<div class="row" style="margin-bottom: 15px; margin-top: 15px;">
+							<h:outputLabel value="Producto *:" styleClass="col-xs-12 col-sm-4 col-md-4 col-lg-4"/>
+							
+							
+							<h:selectOneMenu id="selectProducto" styleClass="col-xs-12 col-sm-7 col-md-7 col-lg-7" value="#{pc_ConsultarMovimientosBean.tarjetaSelected}" >
+							<p:ajax listener="#{pc_ConsultarMovimientosBean.onTarjetaChange()}" update="selectBolsillo idEntidad tipoTarjetaId divimagenTarjeta divimagenTarjeta"/>
+								<f:selectItem itemValue="" itemLabel="Seleccione uno" />
+								<f:selectItems value="#{pc_ConsultarMovimientosBean.listaTarjetas}" var="tarjeta" 
+                                	itemLabel="#{tarjeta.numeroTarjetaEnmascarado} - #{tarjeta.nombreTarjeta}" itemValue="#{tarjeta.numeroTarjeta}"/>
+							</h:selectOneMenu>
+							<p1:tooltip for="selectProducto" value="Seleccione alguno de los productos (Tarjeta prepago) inscritos"/>
+							
+							</div>
+							
+							<div class="row" style="margin-bottom: 15px; margin-top: 15px;">
+								<h:outputLabel value="Bolsillo *:" styleClass="col-xs-12 col-sm-4 col-md-4 col-lg-4"/>	
+								<h:selectOneMenu id="selectBolsillo" styleClass="col-xs-12 col-sm-7 col-md-7 col-lg-7" value="#{pc_ConsultarMovimientosBean.bolsilloSelected}" >
+									<f:selectItem itemValue="" itemLabel="Seleccione uno" />
+									<f:selectItems value="#{pc_ConsultarMovimientosBean.bolsillos}" var="bolsillo" 
+	                                	itemLabel="#{bolsillo.nombre}" itemValue="#{bolsillo.id}"/>
+								</h:selectOneMenu>
+								<p1:tooltip for="selectBolsillo" value="Seleccione un bolsillo"/>								
+							</div>
+							
+							<div class="row" style="margin-bottom: 15px;">
+							<h:outputLabel value="Entidad :" styleClass="col-xs-12 col-sm-4 col-md-4 col-lg-4"/>
+							<h:inputText id="idEntidad" value="#{pc_ConsultarMovimientosBean.entidad}" disabled="true" styleClass="col-xs-12 col-sm-7 col-md-7 col-lg-7"/>
+							</div>
+							<div class="row">
+							<h:outputLabel value="Tipo Tarjeta :" styleClass="col-xs-12 col-sm-4 col-md-4 col-lg-4"/>
+							<h:inputText id="tipoTarjetaId" value="#{pc_ConsultarMovimientosBean.tipoTarjeta}" disabled="true" styleClass="col-xs-12 col-sm-7 col-md-7 col-lg-7"/>
+							</div>
+
+						</div>
+						<div class="row">
+							<div class="  col-xs-12 col-sm-6 col-md-6 col-lg-6 center-on-phone" >							
+							<p:graphicImage id="divimagenTarjeta" value="/images/#{pc_ConsultarMovimientosBean.tarjeta.rutaIconoTarjeta}" style="" styleClass="imagen-prepago"/>
+							</div>
+						</div>
+					
+						<div class="row center-on-phone fechas" style="width:100%;margin-bottom:5%" >
+			
+							<div class="col-xs-12  col-sm-6">
+							<p:outputLabel value="Fecha Inicial *:"  styleClass="col-xs-12 col-sm-4"/>
+							<div class="col-sm-1"> </div>
+							<p:calendar id="idFechaInicial" showOn="button" effect="fold" pattern="dd/MM/yyyy"  
+							 	value="#{pc_ConsultarMovimientosBean.fechaInicial}"
+							mindate="#{pc_ConsultarMovimientosBean.minDate}" maxdate="#{pc_ConsultarMovimientosBean.maxDate}" >
+							<p:ajax event="dateSelect" listener="#{pc_ConsultarMovimientosBean.x}" update="idFechaFinal"/>
+							</p:calendar>
+						 	<p1:tooltip for="idFechaInicial" style="" value="Seleccione la fecha inicial para la consulta de movimientos de la tarjeta" />
+							</div>
+							
+							<div class="col-xs-12  col-sm-6">
+							<p:outputLabel value="Fecha Final *:" styleClass=" col-xs-12 col-sm-4" />
+							<div class="col-sm-1"> </div>
+							<p:calendar id="idFechaFinal" showOn="button" effect="fold" pattern="dd/MM/yyyy" 
+							 value="#{pc_ConsultarMovimientosBean.fechaFinal}"
+							mindate="#{pc_ConsultarMovimientosBean.minDateCalFin}" maxdate="#{pc_ConsultarMovimientosBean.maxDateCalFin}" />
+							<p1:tooltip for="idFechaFinal" value="Seleccione la fecha final para la consulta de movimientos de la tarjeta"/>
+							</div>
+							
+						</div>
+						
+						<div class="row" style="margin: 0px; padding: 1%;">
+						<p:commandButton id="btnConsultar" value="Consultar" ajax="false" action="#{pc_ConsultarMovimientosBean.consultarMov}"
+						 update="panelGeneral tablaResultados campoSaldo" styleClass="col-xs-12 col-sm-2 col-md-2 col-lg-2" style="margin-right:3%;margin-bottom:1%"
+						 oncomplete="statusDialog.hide()" onstart="statusDialog.show()"/>
+						 	<p1:tooltip for="btnConsultar" value="Clic para realizar la consulta de movimientos de la tarjeta seleccionada" />
+						 	
+						 <p:commandButton id="btnVolver" value="Volver"  ajax="false" rendered="#{pc_ConsultarMovimientosBean.mostrarVolver}" 
+						 action="#{pc_ConsultarMovimientosBean.regresar}" styleClass="col-xs-12 col-sm-2 col-md-2 col-lg-2 btn-volver"
+						 oncomplete="statusDialog.hide()" onstart="statusDialog.show()"/>
+						 	<p1:tooltip for="btnVolver" value="Clic para volver a la pantalla de consulta de saldo" />
+						</div>
+						
+					</div>
+
+					<br />
+
+
+					<p:outputPanel id="tablaResultados" rendered="#{pc_ConsultarMovimientosBean.mostarResultados }">
+
+						<div class="row" style="margin:0px;">
+							<h:outputLink target="_blank" rendered="#{pc_ConsultarMovimientosBean.mostarSaldo }" 
+							 value="${resourceURL}" styleClass="col-xs-6 col-sm-3 col-md-3 col-lg-3">
+								<h:graphicImage library="imagenes" name="excel-icon.png" />
+								<h:outputText id="linkExcel" value="Exportar Excel" />
+								<p1:tooltip for="linkExcel" value="Clic para exportar la consulta de movimientos de la tarjeta a formato Excel"/>
+							</h:outputLink>
+							<h:outputLink target="_blank" rendered="#{pc_ConsultarMovimientosBean.mostarSaldo }" 
+							 value="${resourceURLPDF}" styleClass="col-xs-6 col-sm-3 col-md-3 col-lg-3">
+								<h:graphicImage library="imagenes" name="pdf.png" style="width: 26px;" />
+								<h:outputText id="linkPDF" value="Exportar PDF" />
+								<p1:tooltip for="linkPDF" value="Clic para exportar la consulta de movimientos de la tarjeta a formato PDF"/>
+							</h:outputLink>
+							<p:outputLabel value="Saldo :" styleClass="col-xs-12 col-sm-1 campo-saldo" style="text-align:center" />
+							<h:inputText id="campoSaldo" value="#{pc_ConsultarMovimientosBean.saldo}" disabled="true" styleClass="col-xs-12 col-sm-2"
+							style="font-weight: 700;" />
+						</div>
+						
+						<br />
+						
+						<div id="no-more-tables">
+							<p:dataTable rendered="#{pc_ConsultarMovimientosBean.mostarResultados }" id="tablaConsulta" value="#{pc_ConsultarMovimientosBean.lista}" var="lis"
+								paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+								resizableColumns="true" scrollable="true" paginatorPosition="bottom" rows="20" paginator="true" rowsPerPageTemplate="20"
+								styleClass="myTable table-bordered table-striped table-condensed cf" emptyMessage="No existen registros para esta consulta">
+
+								<f:facet name="header">Relación de Movimientos</f:facet>
+								<br />
+
+								<p:column headerText="Fecha&lt;br /&gt; (DD/MM/AAAA)" style="word-wrap: break-word;" styleClass="Fecha (DD/MM/AAAA)">
+									<h:outputText value="#{lis.fechaTransaccion}" />
+								</p:column>
+
+								<p:column headerText="Hora" styleClass="Hora">
+									<h:outputText value="#{lis.hora}" />
+								</p:column>
+
+								<p:column headerText="Ubicación" styleClass="Ubicación">
+									<h:outputText value="#{lis.ubicacion}" />
+								</p:column>
+
+								<p:column headerText="Tipo&lt;br /&gt; Transacción" style="word-wrap: break-word;" styleClass="Tipo Transacción">
+									<h:outputText value="#{lis.tipoTransaccion}" />
+								</p:column>
+								
+								<p:column headerText="Bolsillo" style="word-wrap: break-word;" styleClass="Bolsillo">
+									<h:outputText value="#{lis.bolsillo}" />
+								</p:column>
+
+								<p:column headerText="Valor&lt;br /&gt; Transacción" style="word-wrap: break-word;" styleClass="Valor Transacción">
+									<h:outputText value="$ #{lis.valorTransaccion}" />
+								</p:column>
+
+								<p:column headerText="Respuesta&lt;br /&gt; Trx" style="word-wrap: break-word;" styleClass="Respuesta Trx">
+									<h:outputText value="#{lis.respTransaccion}" />
+								</p:column>
+
+								<p:column headerText="Valor&lt;br /&gt; Comisión" style="word-wrap: break-word;" styleClass="Valor Comisión">
+									<h:outputText value="$ #{lis.valorComision}" />
+								</p:column>
+
+								<p:column headerText="Valor Impuesto&lt;br /&gt; (#{pc_ConsultarMovimientosBean.impuesto})" style="word-wrap: break-word;" styleClass="Valor Impuesto">
+									<h:outputText value="$ #{lis.valorImpuesto}" />
+								</p:column>
+
+							</p:dataTable>
+						</div>
+
+
+
+					</p:outputPanel>
+
+
+				</p:panel>
+			</h:form>
+			<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    	<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+			</p:dialog>
+		</h:body>
+	</f:view>
+</div>

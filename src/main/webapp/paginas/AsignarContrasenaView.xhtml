@@ -1,0 +1,546 @@
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/AsignarContrasenaBean.java" --><!-- /jsf:pagecode -->
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:pt="http://xmlns.jcp.org/jsf/passthrough"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:pext="http://primefaces.org/ui/extensions">
+
+	
+<f:viewParam name="id" value="#{pc_AsignarContrasenaBean.id}" />
+	<f:event type="preRenderView"
+		listener="#{pc_AsignarContrasenaBean.init}" />
+<h:head>
+	<f:facet name="first">
+		<meta http-equiv="X-UA-Compatible" content="IE=EmulateIE8" />
+		<meta http-equiv='cache-control' content='no-cache' />
+		<meta http-equiv='expires' content='0' />
+		<meta http-equiv='pragma' content='no-cache' />
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+		<meta http-equiv="Content-Type"
+			content="application/xhtml+xml; charset=UTF-8" />
+	</f:facet>
+	<ui:param name="root" value="#{request.contextPath}/" />
+	<link rel="stylesheet" href="../resources/css/EstilosWebPrepago.css"
+		type="text/css" />
+	<script language="JavaScript"
+		src="../resources/javascript/funciones.js" />
+	<h:outputStylesheet library="css" name="Estilos.css" />
+	<h:outputStylesheet library="css" name="bootstrap.css" />
+	<h:outputScript library="javascript" name="bootstrap.js" />
+	<h:outputScript library="javascript" name="funciones.js" />
+	<h:outputScript library="primefaces" name="jquery/jquery.js"
+		target="head" />
+
+	<script type="text/javascript">
+		var portletNamespace = "view"
+				+ "#{facesContext.externalContext.response}";
+		var nombreVariable = portletNamespace + ":asignarContrasenaForm:";
+		
+		var jqxhr = $
+				.getJSON(
+						"https://api.ipify.org?format=json",
+						function(data) {
+							document.getElementById(nombreVariable + "IPValue").value = data.ip;
+						})
+						
+		function checkValue(campo){
+		   campo.value= campo.value.replace(/[^A-Za-z]/g, '');
+		 }
+		window.onload = function() {
+			//dialogoConfirmacionVar.show();
+			// Deshabilita la funcion pegar en los campos de contraseña
+			//
+			//campos del formulario  asignar nueva contraseña
+			var contrasena = document.getElementById(':asignarContrasenaForm:nuevaContrasenaIdR');
+			var confirmarContrasena = document.getElementById(':asignarContrasenaForm:ConfnuevaContrasenaIdR');
+			//campos de cambiar  contraseña
+			var contrasena2=document.getElementById(':asignarContrasenaForm:nuevaContrasenaIdRecuperar');
+			var confirmarContrasena2=document.getElementById(':asignarContrasenaForm:ConfnuevaContrasenaIdRecuperar');
+			
+			try{
+			contrasena.onpaste = function(e) {
+				e.preventDefault();
+			}
+			
+			confirmarContrasena.onpaste= function(e) {
+				e.preventDefault();
+			}
+			}catch(err){
+
+			}
+
+
+			try{
+			contrasena2.onpaste = function(e) {
+				e.preventDefault();
+			}
+			
+			confirmarContrasena2.onpaste= function(e) {
+				e.preventDefault();
+			}
+			}catch(err){
+				
+			}
+			
+			
+			
+		}
+		function cambiarCaptcha(){
+			var url = "/wps/WebPrepago/customCaptchaImg?view=asignarPass";
+ 			$('.idimg').attr("src",url);
+		}
+	</script>
+	<style>
+		header, footer{
+			display: none;
+		}
+	</style>
+
+</h:head>
+<f:view>
+<h:body>
+		
+			<h:form id="asignarContrasenaForm" styleClass="asignarContrasenaForm">
+
+				<p:messages id="mensajesInner" autoUpdate="true" closable="true" />
+
+				<div class="row" style="display: hidden">
+					<div id="overlay" />
+					<h:inputHidden id="IPValue" value="#{pc_AsignarContrasenaBean.ip}" />
+
+				</div>
+
+				<p:panel id="PanelComplementoRegistro" header="Asignar Contraseña"
+ 					rendered="#{pc_AsignarContrasenaBean.mostrarPanelComplemento}">
+					<div align="center" >
+
+						<h:panelGrid columns="2">
+
+							<h:outputText value="Usuario: *" style="font-weight: bold;"
+								class="col-xs-12" />
+							<h:panelGroup>
+								<h:inputText id="numDocumento"
+									value="#{pc_AsignarContrasenaBean.numeroDocumento}"
+									class="col-xs-12" maxlength="12" >
+									<pext:keyFilter regEx="/[a-z0-9_]/i" />
+									</h:inputText>
+								<pext:tooltip for="numDocumento"
+									value="Número de documento registrado en el sistema" />
+							</h:panelGroup>
+
+
+							<h:outputText value="Contraseña *" style="font-weight: bold;"
+								class="col-xs-12" />
+							<h:panelGroup>
+								<h:inputSecret id="nuevaContrasenaIdR"
+								
+									value="#{pc_AsignarContrasenaBean.contrasena}" redisplay="true"
+									class="col-xs-12"
+									maxlength="16"
+										>
+									
+								</h:inputSecret>
+								<!-- 						<p:tooltip for="nuevaContrasenaIdR" value="Digite una contraseña que cumpla con las siguientes características:  &#10004; Longitud mínima: 8 Longitud máxima 16 	&#013; Debe contener al menos un número Debe contener al menos una letra mayúscula &#013; Debe contener al menos una letra minúscula  &#013; Debe contener al menos un carácter especial" /> -->
+								<pext:tooltip for="nuevaContrasenaIdR"
+									
+									 >
+									Digite una contraseña que cumpla con las siguientes características: <br/>
+									&#10004; Longitud mínima: 8 <br/>
+									&#10004; Longitud máxima 16 <br/>	
+									&#10004; Debe contener al menos un número <br/>
+									&#10004; Debe contener al menos una letra mayúscula <br/>
+									&#10004; Debe contener al menos una letra minúscula <br/>  
+									&#10004; Debe contener al menos un carácter especial" <br/>
+									</pext:tooltip>
+							</h:panelGroup>
+
+					<h:outputText value="Confirmar Contraseña: *"
+								style="font-weight: bold;" class="col-xs-12" />
+							<h:panelGroup>
+								<h:inputSecret id="ConfnuevaContrasenaIdR"
+									value="#{pc_AsignarContrasenaBean.confirmacionContrasena}"
+									redisplay="true" class="col-xs-12" 
+									maxlength="16"/>
+								<pext:tooltip for="ConfnuevaContrasenaIdR"
+									value="Digite nuevamente la contraseña" />
+							</h:panelGroup>
+
+						</h:panelGrid>
+
+						<h:panelGrid id="captcha" style="margin-top: 2%; text-align: center; margin-bottom:3%;">
+							<h:commandLink onclick="cambiarCaptcha();">
+								<p:graphicImage id="idCaptcha1" styleClass="idimg" value="/customCaptchaImg?view=asignarPass" style="width: 100%;" cache="false"/>
+								<p:ajax update="idCaptcha1"/>
+							</h:commandLink>
+			 				<p:inputText class="valorCaptcha" value="#{pc_AsignarContrasenaBean.valorCaptcha1}" maxlength="15" onkeyup="checkValue(this)">
+			 					<pext:keyFilter regEx="[a-zA-Z0-9]" preventPaste="true"></pext:keyFilter>
+							</p:inputText>
+						</h:panelGrid>
+
+						<div style="align-content: center; text-align: center;margin-top:5%">
+
+							<p:commandButton id="botonAsignar" value="Asignar Contraseña"
+								actionListener="#{pc_AsignarContrasenaBean.registrarUsuario}"
+								onclick="toggleOverlay()"
+								
+								update="mensajesInner asignarContrasenaForm dialogoConfCrearContra captcha"
+								styleClass="btn" />
+								<pext:tooltip for="botonAsignar" value="Click para asignar la contraseña" />
+
+
+							<p:commandButton id="botonCancelar" value="Cancelar"
+								disabled="false" rendered="true"
+								oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'"
+								actionListener="#{pc_AsignarContrasenaBean.limpiarCampos}"
+								styleClass="btn" />
+								<pext:tooltip for="botonCancelar" value="Cancelar la asignación de contraseña" />
+
+						</div>
+					</div>
+				</p:panel>
+
+
+
+
+
+				<p:outputPanel id="PanelSolicitarContrasena" styleClass="ocultarPanelId">
+					<p:panel header="Información de Usuario" style="width=100%"
+						rendered="#{pc_AsignarContrasenaBean.mostrarPanelSolicitar}">
+
+						<div align="center" class="row">
+
+							<h:panelGrid columns="2" style="margin-top:2em">
+
+								<h:outputText value="Usuario: *" style="font-weight: bold;"
+									class="col-xs-12" />
+								<h:panelGroup>
+									<h:inputText id="numDocumentoSolicitar" value="#{pc_AsignarContrasenaBean.numeroDocumentoSolicitar}"
+										class="col-xs-12" maxlength="12">
+									<pext:keyFilter regEx="/[a-z0-9_]/i"/>
+									</h:inputText>
+									<pext:tooltip for="numDocumentoSolicitar" value="Número de documento registrado en el sistema" />
+								</h:panelGroup>
+
+							</h:panelGrid>
+
+							<br />
+
+							
+								
+								
+							<h:panelGrid id="captcha2" style="text-align: center; margin-bottom:3%;">
+								<h:commandLink onclick="cambiarCaptcha();">
+									<p:graphicImage id="idCaptcha2" styleClass="idimg" value="/customCaptchaImg?view=asignarPass" style="width: 100%;" cache="false"/>
+									<p:ajax update="idCaptcha2"/>
+								</h:commandLink>
+				 				<p:inputText class="valorCaptcha" value="#{pc_AsignarContrasenaBean.valorCaptcha2}" maxlength="15" onkeyup="checkValue(this)">
+				 					<pext:keyFilter regEx="[a-zA-Z0-9]" preventPaste="true"></pext:keyFilter>
+								</p:inputText>
+							</h:panelGrid>
+						
+
+							<br />
+
+							<div style="align-content: center; text-align: center;">
+
+
+								<p:commandButton id="botonSolicitar" value="Solicitar"
+									disabled="false" rendered="true"
+									update="PanelOlvidoContrasena PanelValidacionPreguntas mensajesInner idUsuarioRecuperar"
+									styleClass="btn"
+									style="margin-right:3%"
+									actionListener="#{pc_AsignarContrasenaBean.solicitarCambioContrasena}" />
+									<pext:tooltip for="botonSolicitar"
+										value="Click para solicitar recuperación de la contraseña de ingreso." />
+
+								<p:commandButton id="botonCancelar1" value="Cancelar"
+									disabled="false" rendered="true"
+									oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'"
+									actionListener="#{pc_AsignarContrasenaBean.limpiarCampos}"
+									styleClass="btn" />									
+									<pext:tooltip for="botonCancelar1"
+										value="Cancelar registro del usuario." />
+									
+
+							</div>
+						</div>
+					</p:panel>
+				</p:outputPanel>
+
+
+				<br />
+
+
+
+
+
+
+
+
+
+				<p:outputPanel id="PanelValidacionPreguntas">
+ 					<p:panel header="Preguntas de validación de identidad" style="width: 100%;" rendered="#{pc_AsignarContrasenaBean.mostrarPreguntas}">
+
+						<div >
+
+							<div class="container-fluid">
+								
+								<div class="row row-centered">
+								
+								<h:outputLabel value="Usuario :" class="wp-label col-xs-6 col-md-4" />
+								<h:outputText id="idUsuarioRecuperar" value="#{pc_AsignarContrasenaBean.numeroDocumentoRecuperar}"
+									class=" col-xs-6 col-md-8" disabled="true" />
+								
+								</div>
+
+								<div class="row row-centered">								
+								
+								<h:outputLabel value="Pregunta 1: *" style="font-weight: bold" rendered="true" class="wp-label col-xs-12 col-md-4" />
+								<h:panelGroup>
+									<h:inputText id="pregunta1" value="#{pc_AsignarContrasenaBean.preg1}" disabled="true" class="col-xs-12 col-md-8" />
+									<pext:tooltip for="pregunta1" value="Pregunta de seguridad seleccionada en el registro al sistema" />
+								</h:panelGroup>
+								
+								</div>
+					
+								<div class="row row-centered">
+								
+								<h:outputText value="Respuesta 1: *" style="font-weight: bold;" class="wp-label col-xs-12 col-md-4" />
+								<h:panelGroup>
+									<h:inputText id="respuesta1" value="#{pc_AsignarContrasenaBean.resp1}" class="col-xs-12 col-md-8" maxlength="15">
+									<pext:keyFilter regEx="/[a-z0-9\s]/i"/>
+									</h:inputText>
+									<pext:tooltip for="respuesta1" value="Ingrese la respuesta a la pregunta de seguridad, puede usar hasta 15 caracteres" />
+								</h:panelGroup>
+								</div>
+							
+
+
+
+								<div  class="row row-centered">
+								<h:outputLabel value="Pregunta 2: *" style="font-weight: bold;" rendered="true" class="wp-label col-xs-12 col-md-4" />
+								<h:panelGroup>
+									<h:inputText id="pregunta2" value="#{pc_AsignarContrasenaBean.preg2}" disabled="true" class="col-xs-12 col-md-8" />
+									<pext:tooltip for="pregunta2" value="Pregunta de seguridad seleccionada en el registro al sistema" />
+								</h:panelGroup>
+								</div>
+								
+								
+
+								<div align="center" class="row row-centered">
+								<h:outputText value="Respuesta 2: *" style="font-weight: bold;" class="wp-label col-xs-12 col-md-4" />
+								<h:panelGroup>
+									<h:inputText id="respuesta2" value="#{pc_AsignarContrasenaBean.resp2}" class="col-xs-12 col-md-8" maxlength="15">
+									<pext:keyFilter regEx="/[a-z0-9\s]/i"/>
+									</h:inputText>
+									<pext:tooltip for="respuesta2" value="Ingrese la respuesta a la pregunta de seguridad, puede usar hasta 15 caracteres" />
+								</h:panelGroup>
+								</div>
+								
+								
+	
+								<div align="center" class="row row-centered">
+								<h:outputLabel value="Pregunta 3: *" style="font-weight: bold;" rendered="true" class="wp-label col-xs-12 col-md-4" />
+								<h:panelGroup>
+									<h:inputText id="pregunta3" value="#{pc_AsignarContrasenaBean.preg3}" disabled="true" class="col-xs-12 col-md-8" />
+									<pext:tooltip for="pregunta3" value="Pregunta de seguridad seleccionada en el registro al sistema" />
+								</h:panelGroup>
+								</div>
+
+
+								<div align="center" class="row row-centered">
+								<h:outputText value="Respuesta 3: *" style="font-weight: bold;" class="wp-label col-xs-12 col-sm-6 col-md-4" />
+								<h:panelGroup>
+									<h:inputText id="respuesta3" value="#{pc_AsignarContrasenaBean.resp3}" class="col-xs-12 col-md-8" maxlength="15">
+									<pext:keyFilter regEx="/[a-z0-9\s]/i"/>
+									</h:inputText>
+									<pext:tooltip for="respuesta3" value="Ingrese la respuesta a la pregunta de seguridad, puede usar hasta 15 caracteres" />
+								</h:panelGroup>
+								</div> 
+								
+							</div>
+
+						</div>
+
+						<div style="" class="row row-centered">
+
+							<p:commandButton id="botonEnviar" value="Enviar" ajax="false" disabled="false" process="@form" styleClass="btn" style="margin-right:3%; padding-left: 1%; padding-right: 1%;" 
+								actionListener="#{pc_AsignarContrasenaBean.validarPreguntas}" update="PanelValidacionPreguntas PanelOlvidoContrasena"/>
+								
+								<pext:tooltip for="botonEnviar" value="Click para verificar identidad y asignar contraseña" />
+
+							<p:commandButton id="botonCancelarPreguntas" value="Cancelar" disabled="false" oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'"
+								actionListener="#{pc_AsignarContrasenaBean.limpiarCampos}" styleClass="btn" />
+								<pext:tooltip for="botonCancelarPreguntas" value="Cancela la verificación de identidad" />
+								
+						</div>
+
+					</p:panel>
+				</p:outputPanel>
+
+				<br />
+
+
+				<p:outputPanel id="PanelOlvidoContrasena">
+					<p:panel header="Asignar Nueva Contraseña" style="width: 100%;"
+						rendered="#{pc_AsignarContrasenaBean.mostrarPanelOlvido}">
+
+							<div align="center" class="row " style="padding-left:5%;padding-right:5%">
+
+							<h:panelGrid columns="2">
+
+								<h:outputText value="Usuario: *" style="font-weight: bold;"
+									class="col-xs-12" />
+								<h:panelGroup  >
+									<h:outputText id="numDocumentoRecuperar"
+										value="#{pc_AsignarContrasenaBean.numeroDocumentoRecuperar}"
+										class="col-xs-12" disabled="true" />
+									<pext:tooltip for="numDocumentoRecuperar"
+										value="Número de documento registrado en el sistema" />
+								</h:panelGroup>
+
+								
+								<h:outputText value="Nueva Contraseña *"
+									style="font-weight: bold;margin-top:10px;margin-bottom:10px" class="col-xs-12" />
+								<h:panelGroup>
+									<h:inputSecret id="nuevaContrasenaIdRecuperar"
+										value="#{pc_AsignarContrasenaBean.contrasenaRecuperar}"
+										redisplay="true" class="col-xs-12" maxlength="16"
+										/>
+									<pext:tooltip for="nuevaContrasenaIdRecuperar"
+										>
+										Digite una contraseña que cumpla con las siguientes características: <br/>
+									&#10004; Longitud mínima: 8 <br/>
+									&#10004; Longitud máxima 16 <br/>	
+									&#10004; Debe contener al menos un número <br/>
+									&#10004; Debe contener al menos una letra mayúscula <br/>
+									&#10004; Debe contener al menos una letra minúscula <br/>  
+									&#10004; Debe contener al menos un carácter especial" <br/>
+										</pext:tooltip>
+								</h:panelGroup>
+
+								<h:outputText value="Confirmar Contraseña: *"
+									style="font-weight: bold;" class="col-xs-12" />
+								<h:panelGroup>
+									<h:inputSecret id="ConfnuevaContrasenaIdRecuperar"
+										value="#{pc_AsignarContrasenaBean.confirmacionContrasenaRecuperar}"
+										redisplay="true" class="col-xs-12" maxlength="16"
+										onselectstart="return false" onpaste="return false;" onCopy="return false" onCut="return false" onDrag="return false" onDrop="return false"
+										/>
+									<pext:tooltip for="ConfnuevaContrasenaIdRecuperar"
+										value="Digite nuevamente la contraseña" />
+								</h:panelGroup>
+								
+									
+
+							</h:panelGrid>
+
+							<br />
+							
+							
+						<h:panelGrid id="captcha3" style="text-align: center; margin-bottom:3%;">	
+							<h:commandLink onclick="cambiarCaptcha();">
+								<p:graphicImage id="idCaptcha3" styleClass="idimg" value="/customCaptchaImg?view=asignarPass" style="width: 100%;" cache="false"/>
+								<p:ajax update="idCaptcha3"/>
+							</h:commandLink>
+			 				<p:inputText class="valorCaptcha" value="#{pc_AsignarContrasenaBean.valorCaptcha3}" maxlength="15" onkeyup="checkValue(this)">
+			 					<pext:keyFilter regEx="[a-zA-Z0-9]" preventPaste="true"></pext:keyFilter>
+							</p:inputText>
+						</h:panelGrid>
+								
+							
+								
+							<br/>	
+								
+								
+							<div style="align-content: center; text-align: center;">
+							<p:commandButton id="botonCambioContrasena"
+									value="Asignar Contraseña"
+									update="mensajesInner asignarContrasenaForm captcha3"
+									styleClass="btn col-xs-12 col-sm-2 col-md-2 col-lg-3"
+									style="margin-right:3%; float:none"
+									actionListener="#{pc_AsignarContrasenaBean.cambiarContrasena}"
+									oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'" />
+									<pext:tooltip for="botonCambioContrasena" value="Click para asignar la contraseña" />
+
+								<p:commandButton id="botonCancelar2" value="Cancelar"
+									disabled="false" rendered="true"
+									oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'"
+									actionListener="#{pc_AsignarContrasenaBean.limpiarCampos}"
+									styleClass="btn col-xs-12 col-sm-5 col-md-5 col-lg-5" style="float:none" />
+									<pext:tooltip for="botonCancelar2" value="Cancelar la asignación de contraseña" />
+									
+									</div>
+								
+							</div>
+
+							
+							
+
+							
+					
+					</p:panel>
+				</p:outputPanel>
+				
+				<p:dialog modal="true" id="dialogoConfCrearContra" closeOnEscape="true"
+					closable="true" 
+					widgetVar="dialogoConfCrearContra"
+					header="Confirmación creación de contraseña" scrollable="true"
+					draggable="false">
+
+					<div align="center">
+						<H4 style="text-align: justify;">
+							Se ha creado la contraseña con éxito<br />
+
+						</H4>
+					</div>
+					<div align="center">
+						<p:panelGrid id="displayConfCrearContra" columns="2"
+							styleClass="noBorders">
+							<p:commandButton value="Aceptar" id="idAceptarCreacion"
+								oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'"
+								actionListener="#{pc_AsignarContrasenaBean.limpiarCampos}"
+								immediate="true" />
+							<pext:tooltip for="idAceptar" value="Clic para regresar al Login." />
+
+						</p:panelGrid>
+					</div>
+				</p:dialog>
+				
+
+				<p:dialog modal="true" id="dialogoConfirmacion" closeOnEscape="true"
+					closable="true"
+					widgetVar="dialogoConfirmacionVar"
+					header="Confirmación de cambio de contraseña" scrollable="true"
+					draggable="false">
+
+					<div align="center">
+						<H4 style="text-align: justify;">
+							Se ha realizado con éxito el cambio de contraseña.<br />
+
+						</H4>
+					</div>
+					<div align="center">
+						<p:panelGrid id="displayConfirmacion" columns="2"
+							styleClass="noBorders">
+							<p:commandButton value="Aceptar" id="idAceptar"
+								oncomplete="window.location='#{pc_AsignarContrasenaBean.urlLogin}'"
+								actionListener="#{pc_AsignarContrasenaBean.limpiarCampos}"
+								immediate="true" />
+							<pext:tooltip for="idAceptar" value="Clic para regresar al Login." />
+
+						</p:panelGrid>
+					</div>
+				</p:dialog>
+
+
+			</h:form>
+			
+</h:body>
+</f:view>
+</div>
+
+
+						

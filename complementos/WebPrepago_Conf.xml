@@ -1,0 +1,322 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<webPrepago>
+	<urlAsignarConstrasena>https://www.pagosrbm.com/wps/WebPrepagoPP/wp/paginas/AsignarContrasenaView.xhtml</urlAsignarConstrasena>
+	<urlLogin>https://www.pagosrbm.com/wps/portal</urlLogin>
+	<publicKeyRecaptcha>6Lf0fCAUAAAAAJ1tW-Ktlphsjn5C4_1J22ulNrR8</publicKeyRecaptcha>
+	<impuesto>Valor 4x1.000</impuesto>
+	<urlOlvidoClave>https://www.pagosrbm.com/wps/CambiarPasswordPP/faces/CambioPasswordPortletView.xhtml</urlOlvidoClave>
+	<dataSource>jdbc/webPrepago</dataSource>
+	<bpodataSource>jdbc/bpo</bpodataSource>
+	<abreviatura>PRW</abreviatura>
+	<grupo>cn=TarjetaHabiente,cn=grupos,ou=personas,DC=REDEBAN,DC=COM</grupo>
+	<queries>
+                <sentencia>
+			<nombre>obtenerTipoDocumento</nombre>
+			<query>SELECT ID_TIPODOCUMENTO,TDOC_DESCRIPCION,TDOC_LONGITUD_MAX FROM WPR_TIPODOCUMENTO</query>
+			<timeout>10</timeout>
+		</sentencia>
+
+		<sentencia>
+			<nombre>obtenerPreguntas</nombre>
+			<query>SELECT ID_PREGUNTA,PRE_PREGUNTA,PRE_LISTA FROM WPR_PREGUNTAS</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultarUsuario</nombre>
+			<query>SELECT ID_USUARIO,USR_APELLIDO,USR_CORREO,USR_NOMBRE,USR_DOCUMENTO,USR_ID_PREGUNTA1,USR_ID_PREGUNTA2,USR_ID_PREGUNTA3, USR_RESPUESTA1,USR_RESPUESTA2,USR_RESPUESTA3,USR_TELEFONO,USR_ID_TIPODOCUMENTO,USR_FECHACREACION FROM WPR_USUARIO WHERE ID_USUARIO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultarUsuarioPorTipo</nombre>
+			<query>SELECT ID_USUARIO,USR_APELLIDO,USR_CORREO,USR_NOMBRE,USR_DOCUMENTO,USR_ID_PREGUNTA1,USR_ID_PREGUNTA2,USR_ID_PREGUNTA3, USR_RESPUESTA1,USR_RESPUESTA2,USR_RESPUESTA3,USR_TELEFONO,USR_ID_TIPODOCUMENTO FROM WPR_USUARIO WHERE USR_DOCUMENTO = ? AND USR_TIPOUSUARIO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>registrarUsuario</nombre>
+			<query>INSERT INTO WPR_USUARIO (ID_USUARIO, USR_ID_TIPODOCUMENTO, USR_DOCUMENTO, USR_NOMBRE, USR_APELLIDO, USR_TELEFONO, USR_CORREO, USR_ID_PREGUNTA1, USR_RESPUESTA1, USR_ID_PREGUNTA2, USR_RESPUESTA2, USR_ID_PREGUNTA3, USR_RESPUESTA3, USR_TIPOUSUARIO, USR_FECHACREACION) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>cambiarAPermanente</nombre>
+			<query>UPDATE WPR_USUARIO SET  USR_TIPOUSUARIO = '1' WHERE USR_DOCUMENTO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+
+		<sentencia>
+			<nombre>ObtenerSecuenciaUsuario</nombre>
+			<query>SELECT SEQ_WPR_USUARIO.NEXTVAL AS ID_USUARIO FROM DUAL</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>AsiganrUsuarioPermanente</nombre>
+			<query>update wpr_usuario set usr_tipousuario = ? where usr_documento = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultarTarjetasXUsuario</nombre>
+			<query>  SELECT TAR_NUMERO,TIP_DESCRIPCION,ENT_DESCRIPCION,TAR_NOMBRE,TAR_FECHA_REGISTRO,TAR_NUM_ENCRIPT FROM (WPR_TARJETAS A JOIN WPR_ENTIDAD B ON A.TAR_ID_ENTIDAD = B.ID_ENTIDAD) JOIN WPR_TIPO_TARJETA C ON A.TAR_ID_TIPO_TARJETA = C.ID_TIPO_TARJETA WHERE TAR_ID_USUARIO = ? ORDER BY TAR_NUMERO</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultarTarjetasUsuario</nombre>
+			<query> select TAR_NUMERO AS NUM_ENMAS, E.ID_ENTIDAD AS IDENTI, E.ENT_DESCRIPCION AS ENTIDAD, TD.ID_TIPODOCUMENTO AS IDTIPODOC, TD.TDOC_DESCRIPCION AS TIPODOC, T.TAR_NUMDOC_ASO AS NUMDOCASO, T.TAR_NOMBRE AS NOMBRE_TAR, T.TAR_FECHA_REGISTRO AS FECHA_TAR, TT.ID_TIPO_TARJETA AS IDTIPOTAR, TT.TIP_DESCRIPCION AS TIPOTAR, T.TAR_NUM_ENCRIPT AS TAR_NUM_ENCRIPT FROM WPR_TARJETAS T INNER JOIN WPR_ENTIDAD E ON (E.ID_ENTIDAD = T.TAR_ID_ENTIDAD) INNER JOIN WPR_TIPODOCUMENTO TD ON (TD.ID_TIPODOCUMENTO = T.TAR_ID_TIPODOC_ASO) INNER JOIN WPR_TIPO_TARJETA TT ON (TT.ID_TIPO_TARJETA = T.TAR_ID_TIPO_TARJETA) INNER JOIN WPR_USUARIO U ON (T.TAR_ID_USUARIO = U.ID_USUARIO) WHERE U.USR_DOCUMENTO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>EliminarTarjeta</nombre>
+			<query>DELETE FROM WPR_TARJETAS WHERE TAR_NUM_ENCRIPT =?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ExisteTarjeta</nombre>
+			<query>SELECT TAR_NUMERO FROM wpr_tarjetas where tar_id_usuario is null and tar_numero = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ModificarTarjetaUsuario</nombre>
+			<query>update WPR_TARJETAS SET TAR_NOMBRE= ?, TAR_NUMDOC_ASO = ?, TAR_ID_TIPODOC_ASO = ? WHERE TAR_NUM_ENCRIPT =? AND TAR_ID_USUARIO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>EntidadTipoTarjeta</nombre>
+			<query>Select ent.ID_ENTIDAD AS ID_ENTIDAD, ent.ENT_DESCRIPCION AS ENTIDAD, tip.ID_TIPO_TARJETA AS ID_TIPO_TAR, tip.TIP_DESCRIPCION AS TIPO_TARJETA FROM wpr_tarjetas tar inner join wpr_entidad ent on (ent.id_entidad = tar.tar_id_entidad) inner join wpr_tipo_tarjeta tip on (tip.id_tipo_tarjeta = tar.tar_id_tipo_tarjeta) where tar.tar_numero = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>RegistrarTarjetaUsuario</nombre>
+			<query>INSERT INTO WPR_TARJETAS (TAR_NUMERO, TAR_ID_TIPO_TARJETA, TAR_ID_ENTIDAD, TAR_NOMBRE, TAR_ID_USUARIO, TAR_FECHA_REGISTRO, TAR_NUM_ENCRIPT, TAR_NUMDOC_ASO, TAR_ID_TIPODOC_ASO) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerEntidades</nombre>
+			<query>SELECT FIID_ENTIDAD,ENT_DESCRIPCION,ID_ENTIDAD FROM WPR_ENTIDAD</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerSecuenciaEntidad</nombre>
+			<query>SELECT SEQ_WPR_ENTIDAD.NEXTVAL AS ID_ENTIDAD FROM DUAL</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>RegistrarEntidad</nombre>
+			<query>INSERT INTO WPR_ENTIDAD (ID_ENTIDAD, ENT_DESCRIPCION, FIID_ENTIDAD) VALUES (?, ?, ?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ModificarEntidad</nombre>
+			<query>UPDATE WPR_ENTIDAD SET ENT_DESCRIPCION = ?, FIID_ENTIDAD = ? WHERE ID_ENTIDAD = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>EliminarEntidad</nombre>
+			<query>DELETE FROM wpr_entidad WHERE fiid_entidad = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerTipoTarjeta</nombre>
+			<query>SELECT ID_TIPO_TARJETA,TIP_DESCRIPCION FROM WPR_TIPO_TARJETA</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerSecuenciaTipoTar</nombre>
+			<query>SELECT SEQ_WPR_TIPO_TAR.NEXTVAL AS ID_TIPO_TARJETA FROM DUAL</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>RegistrarTipoTarjeta</nombre>
+			<query>INSERT INTO WPR_TIPO_TARJETA (ID_TIPO_TARJETA, TIP_DESCRIPCION) VALUES (?, ?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ModificarTipoTarjeta</nombre>
+			<query>UPDATE WPR_TIPO_TARJETA SET TIP_DESCRIPCION = ? WHERE ID_TIPO_TARJETA = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultarParamBin</nombre>
+			<query> Select PARAM_BIN_NUMERO AS BIN, PB.PARAM_BIN_RANGO_INICIAL AS RANGOINI, PB.PARAM_BIN_RANGO_FINAL AS RANGOFIN, PB.PARAM_BIN_IMAGEN AS IMAGEN, PB.PARAM_BIN_LONGITUD_TARJETA AS LONGITUD, T.ID_TIPO_TARJETA AS IDTARJETA, T.TIP_DESCRIPCION AS TIPOTARJETA, E.ID_ENTIDAD AS IDENTIDAD, E.ENT_DESCRIPCION AS ENTIDAD FROM WPR_PARAM_BINES PB Inner join WPR_ENTIDAD E on (E.ID_ENTIDAD = PB.PARAM_BIN_ID_ENTIDAD) inner join WPR_TIPO_TARJETA T on (T.ID_TIPO_TARJETA = PB.PARAM_BIN_ID_TIPO_TARJETA)WHERE ? BETWEEN PB.PARAM_BIN_RANGO_INICIAL AND PB.PARAM_BIN_RANGO_FINAL</query>
+			<timeout>15</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerBines</nombre>
+			<query>SELECT PB.PARAM_BIN_NUMERO AS BIN, PB.PARAM_BIN_RANGO_INICIAL AS RANGOINI, PB.PARAM_BIN_RANGO_FINAL AS RANGOFIN, PB.PARAM_BIN_ID_ENTIDAD AS IDNETIDAD, PB.PARAM_BIN_LONGITUD_TARJETA AS LONGITUD, PB.PARAM_BIN_IMAGEN AS NOMBRE_IMAGEN, PB.PARAM_BIN_ID_TIPO_TARJETA AS IDTIPOTAR, PB.PARAM_BIN_ID AS IDBIN, E.ENT_DESCRIPCION AS ENTIDAD, T.TIP_DESCRIPCION AS TIPOTAR FROM WPR_PARAM_BINES PB INNER JOIN WPR_ENTIDAD E ON (E.ID_ENTIDAD = PB.PARAM_BIN_ID_ENTIDAD) INNER JOIN WPR_TIPO_TARJETA T ON (T.ID_TIPO_TARJETA = PB.PARAM_BIN_ID_TIPO_TARJETA)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerSecuenciaBin</nombre>
+			<query>SELECT SEQ_WPR_PARAM_BINES.NEXTVAL AS PARAM_BIN_ID FROM DUAL</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>RegistrarBin</nombre>
+			<query>INSERT INTO WPR_PARAM_BINES (PARAM_BIN_NUMERO, PARAM_BIN_RANGO_INICIAL, PARAM_BIN_RANGO_FINAL, PARAM_BIN_ID_ENTIDAD, PARAM_BIN_LONGITUD_TARJETA, PARAM_BIN_IMAGEN, PARAM_BIN_ID_TIPO_TARJETA, PARAM_BIN_ID) VALUES (?, ?, ?, ?, ?, ?, ?, ?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ModificarBin</nombre>
+			<query>UPDATE WPR_PARAM_BINES SET PARAM_BIN_NUMERO = ?, PARAM_BIN_RANGO_INICIAL = ?, PARAM_BIN_RANGO_FINAL = ?, PARAM_BIN_ID_ENTIDAD = ?, PARAM_BIN_LONGITUD_TARJETA = ?, PARAM_BIN_IMAGEN = ?, PARAM_BIN_ID_TIPO_TARJETA = ? WHERE PARAM_BIN_ID = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>existeTarjetaBD</nombre>
+			<query>SELECT TAR_NUMERO FROM WPR_TARJETAS WHERE TAR_NUM_ENCRiPT = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		
+		<sentencia>
+			<nombre>existeTarjetaBPO</nombre>
+			<query>SELECT * FROM AUARCHV4.AUCAF WHERE ASBPAN = ? </query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultaSaldoTarjetaBPO</nombre>
+			<query>SELECT APBCDS + APBSBG - (ASPAUT + APBAUT + APBSMI) AS SALDO FROM AUARCHV4.AUPBF WHERE APBPAN = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultaMovimientosTarjetaBPO</nombre>
+			<query>SELECT AMVFSI FECHATRAN, AMV012 HORA, substr(AMV043, 1, 22) || ' ' || substr(AMV043, 30, 6) UBICACION, TRADES TIPOTRAN, case when AMV004>0 then AMV004/100 else 0 end VALORTX, case AMV039 when '00' then 'APROBADA' else 'DECLINADA' end RESPUESTA, AMVVLC VLRCOMISION, AMVVIE VLRIMPUESTO FROM AUARCHV4.AUMV INNER JOIN AUARCHV4.AUTRA ON (TRATRT=AMVTTR) WHERE amvtar = ? AND amvinr in (' ','2','1') AND AMVFSI &gt;= ? AND AMVFSI &lt;= ? UNION ALL SELECT AMHFSI FECHATRAN, AMH012 HORA, substr(AMH043, 1, 22) || ' ' || substr(AMH043, 30, 6) UBICACION, TRADES TIPOTRAN, case when AMH004>0 then AMH004/100 else 0 end VALORTX, case AMH039 when '00' then 'APROBADA' else 'DECLINADA' end RESPUESTA, AMHVLC VLRCOMISION, AMHVIE VLRIMPUESTO FROM AUARCHV4.AUMVH INNER JOIN AUARCHV4.AUTRA ON (TRATRT=AMHTTR) WHERE amhtar = ? AND AMHINR in (' ','2','1') AND AMHFSI &gt;= ? AND AMHFSI &lt;= ? order by 1 desc, 2 desc, 3 desc</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultaTransaccionesBPO</nombre>
+			<query>SELECT TRATRT AS CODIGO_TRANSACCION, TRADES AS NOMBRE_TRANSACCION FROM AUARCHV4.AUTRA</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultaEstadosTarjetaBPO</nombre>
+			<query>SELECT TESCOD CODIGO_ESTADO, TESDES AS NOMBRE_ESTADO FROM TDARCHV3P.TDES</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultaEstadoTarjetaBPO</nombre>
+			<query>SELECT AETDES AS ESTADO FROM AUARCHV4.AUCAF INNER JOIN AUARCHV4.AUET ON AETEST=ASBEST WHERE ASBPAN = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerUsuariosInactivos</nombre>
+			<query>Select U.USR_APELLIDO, U.USR_NOMBRE, U.USR_CORREO, U.USR_DOCUMENTO, U.USR_FECHACREACION, U.USR_ULTIMACONEXION, U.ID_USUARIO, trunc(sysdate)-trunc(U.USR_ULTIMACONEXION) AS DIAS_INACTIVIDAD, U.USR_FECHANOTIFICACION  FROM WPR_USUARIO U  WHERE trunc(sysdate)-trunc(U.USR_ULTIMACONEXION) >= (SELECT P.VALOR FROM WPR_PARAMETROS P WHERE P.NOMBRE='DIAS_INACTIVIDAD') ORDER BY LENGTH (U.USR_DOCUMENTO), U.USR_DOCUMENTO  ASC</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerUsuariosInactivosXDias</nombre>
+			<query>Select U.USR_APELLIDO, U.USR_NOMBRE, U.USR_CORREO, U.USR_DOCUMENTO, U.USR_FECHACREACION, U.USR_ULTIMACONEXION, U.ID_USUARIO, trunc(sysdate)-trunc(U.USR_ULTIMACONEXION) AS DIAS_INACTIVIDAD, U.USR_FECHANOTIFICACION  FROM WPR_USUARIO U  WHERE trunc(sysdate)-trunc(U.USR_ULTIMACONEXION) >= ? ORDER BY LENGTH (U.USR_DOCUMENTO), U.USR_DOCUMENTO  ASC</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerNombreImagen</nombre>
+			<query>SELECT PARAM_BIN_IMAGEN AS NOMBRE_IMAGEN FROM WPR_PARAM_BINES WHERE ? BETWEEN PARAM_BIN_RANGO_INICIAL AND PARAM_BIN_RANGO_FINAL</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>modificarUsuarioNotificar</nombre>
+			<query>UPDATE WPR_USUARIO SET USR_FECHANOTIFICACION = ? WHERE USR_DOCUMENTO =?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>modificarUltimaConexion</nombre>
+			<query>UPDATE WPR_USUARIO SET USR_ULTIMACONEXION = ? WHERE USR_DOCUMENTO =?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>eliminarUsuarioInactivo</nombre>
+			<query>DELETE FROM WPR_USUARIO USU WHERE USU.ID_USUARIO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>eliminarUsuarioInactivoTarjetas</nombre>
+			<query>DELETE FROM WPR_TARJETAS TAR WHERE TAR.TAR_ID_USUARIO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>registrarHistorico</nombre>
+			<query>INSERT INTO WPR_HISTORICO (HIS_ID, HIS_ID_USUARIO, HIS_FECHA_TRANSACCION, HIS_NUM_TARJETA, HIS_ENTIDAD, HIS_ACCION) VALUES (?, ?, ?, ?, ?, ?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>secuencialHistorico</nombre>
+			<query>SELECT SEQ_WPR_HISTORICO.NEXTVAL AS HIS_ID FROM DUAL</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>consultaBinBPO</nombre>
+			<query>SELECT TBICOD FROM TDARCHV3.TDBI WHERE TBICOD LIKE ? AND TBINDT = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>tokenizarTarjeta</nombre>
+			<query>CALL CIPGMSPV10.SSHMB01(?, ?, ?,?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>llamadoBPOPCI</nombre>
+			<query>CALL TDPGMSV5R.TDCWPB1(?,?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ActualizarDatosInfoPersonal</nombre>
+			<query>UPDATE WPR_USUARIO SET USR_NOMBRE=?, USR_APELLIDO=?, USR_TELEFONO=?, USR_CORREO=?, USR_ID_PREGUNTA1=?, USR_RESPUESTA1=?, USR_ID_PREGUNTA2=?, USR_RESPUESTA2=?, USR_ID_PREGUNTA3=?, USR_RESPUESTA3=? WHERE USR_DOCUMENTO = ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ConsultarParametros</nombre>
+			<query>SELECT NOMBRE, VALOR FROM WPR_PARAMETROS</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>GuardarParametrosTarea</nombre>
+			<query>UPDATE WPR_PARAMETROS SET VALOR = CASE NOMBRE WHEN 'DIAS_INACTIVIDAD_TAREA' THEN ? WHEN 'DIAS_ELIMINACION_TAREA' THEN ? WHEN 'CORREOS_NOTIFICAR_DEPURACION' THEN ? END WHERE NOMBRE IN ('DIAS_INACTIVIDAD_TAREA','DIAS_ELIMINACION_TAREA','CORREOS_NOTIFICAR_DEPURACION')</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ConsultarBolsillos</nombre>
+			<query>SELECT ID_TIPO_BOLSILLO, TIP_DESCRIPCION FROM WPR_TIPO_BOLSILLO</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ConsultarBolsillosbyTarjeta</nombre>
+			<query>SELECT TB.ID_TIPO_BOLSILLO AS ID_TIPO_BOLSILLO, TB.TIP_DESCRIPCION AS TIP_DESCRIPCION FROM WPR_TIPO_BOLSILLO TB INNER JOIN WPR_BIN_BOLSILLO BB ON (TB.ID_TIPO_BOLSILLO=BB.ID_TIPO_BOLSILLO) INNER JOIN WPR_PARAM_BINES BIN ON (BB.PARAM_BIN_ID=BIN.PARAM_BIN_ID) WHERE ? BETWEEN BIN.PARAM_BIN_RANGO_INICIAL AND BIN.PARAM_BIN_RANGO_FINAL</query>
+			<timeout>15</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>RegistrarBolsillo</nombre>
+			<query>INSERT INTO WPR_TIPO_BOLSILLO (ID_TIPO_BOLSILLO, TIP_DESCRIPCION) VALUES (?,?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ModificarBolsillo</nombre>
+			<query>UPDATE WPR_TIPO_BOLSILLO SET ID_TIPO_BOLSILLO=?, TIP_DESCRIPCION=? WHERE ID_TIPO_BOLSILLO= ?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ConsultarBinBolsillos</nombre>
+			<query>SELECT TB.TIP_DESCRIPCION, TB.ID_TIPO_BOLSILLO, PB.PARAM_BIN_NUMERO, PB.PARAM_BIN_ID, E.ENT_DESCRIPCION FROM WPR_BIN_BOLSILLO BB JOIN WPR_TIPO_BOLSILLO TB ON (BB.ID_TIPO_BOLSILLO=TB.ID_TIPO_BOLSILLO) JOIN WPR_PARAM_BINES PB ON (BB.PARAM_BIN_ID = PB.PARAM_BIN_ID) JOIN WPR_ENTIDAD E ON (PB.PARAM_BIN_ID_ENTIDAD= E.ID_ENTIDAD)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>RegistrarBinXBolsillo</nombre>
+			<query>INSERT INTO WPR_BIN_BOLSILLO (PARAM_BIN_ID, ID_TIPO_BOLSILLO) VALUES (?,?)</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ModificarBinXBolsillo</nombre>
+			<query>UPDATE WPR_BIN_BOLSILLO SET PARAM_BIN_ID=?, ID_TIPO_BOLSILLO=? WHERE PARAM_BIN_ID=? AND ID_TIPO_BOLSILLO=?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>EliminarBinXBolsillo</nombre>
+			<query>DELETE FROM WPR_BIN_BOLSILLO WHERE PARAM_BIN_ID=?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>EliminarBolsillo</nombre>
+			<query>DELETE FROM WPR_TIPO_BOLSILLO WHERE ID_TIPO_BOLSILLO=?</query>
+			<timeout>10</timeout>
+		</sentencia>
+		<sentencia>
+			<nombre>ObtenerUsuariosInactivosXDiasTarea</nombre>
+			<query>Select U.USR_APELLIDO, U.USR_NOMBRE, U.USR_CORREO, U.USR_DOCUMENTO, U.USR_FECHACREACION, U.USR_ULTIMACONEXION, U.ID_USUARIO, trunc(sysdate)-trunc(U.USR_ULTIMACONEXION) AS DIAS_INACTIVIDAD, U.USR_FECHANOTIFICACION  FROM WPR_USUARIO U  WHERE trunc(sysdate)-trunc(U.USR_ULTIMACONEXION) >= ? AND U.USR_FECHANOTIFICACION IS NOT null ORDER BY LENGTH (U.USR_DOCUMENTO), U.USR_DOCUMENTO  ASC</query>
+			<timeout>10</timeout>
+		</sentencia>
+	</queries>
+</webPrepago>

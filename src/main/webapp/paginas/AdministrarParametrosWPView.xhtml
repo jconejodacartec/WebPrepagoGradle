@@ -1,0 +1,432 @@
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/AdministrarParametrosWPBean.java" --><!-- /jsf:pagecode -->
+<div  xmlns:ui="http://java.sun.com/jsf/facelets" 
+ xmlns:f="http://java.sun.com/jsf/core"
+ xmlns:h="http://java.sun.com/jsf/html" 
+ xmlns:portlet="http://java.sun.com/portlet_2_0"
+ xmlns:p ="http://primefaces.org/ui"
+ xmlns:p1="http://primefaces.org/ui/extensions">
+ 
+ <h:head>
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />
+		<h:outputScript library="javascript" name="funciones.js" />
+		<h:outputStylesheet library="css" name="bootstrap.css" />
+		<h:outputScript library="javascript" name="bootstrap.js" />
+		
+		<script language="JavaScript" type="text/javascript">
+			function cargar(){
+				var portletNamespace = "view" + "#{facesContext.externalContext.response.namespace}";
+				var nombreVariable = portletNamespace + ":formularioAdminParametros:";
+				
+				var jqxhr = $.getJSON( "https://api.ipify.org?format=json", function(data) {
+					document.getElementById(nombreVariable+"ipValue").value = data.ip;
+				})
+				
+			}
+			window.onload = function(){
+				cargar();
+			}
+		</script>
+		<script type="text/javascript">
+			var namespace = "view" + "${facesContext.externalContext.response.namespace}"+":formularioAdminParametros";
+			$( document ).ready(function() {
+				var msj = "#{pc_AdministrarParametrosWPView.msjCarga}";
+				var type = "#{pc_AdministrarParametrosWPView.typeMsjCarga}";
+	
+				if(msj.length > 0){
+					var div = $(document.createElement('div')).addClass('ui-messages-'+type+' ui-corner-all');
+					var span1 = $(document.createElement('span')).addClass('ui-messages-'+type+'-icon');
+					var ul = $(document.createElement('ul'));
+					var li = $(document.createElement('li'));
+					var span2 = $(document.createElement('span')).addClass('ui-messages-'+type+'-summary').html(msj);
+					
+					div.append(span1);
+					li.append(span2);
+					ul.append(li);
+					div.append(ul);
+					$('.ui-messages').append(div);
+	
+				}
+			});
+			
+			$( "a" ).click(function() {
+				var btnClean = document.getElementById(namespace+":botonClean");
+				btnClean.click();
+			});
+		</script>
+		
+		<meta http-equiv="Content-Type"
+				content="application/xhtml+xml; charset=UTF-8" />
+
+				
+	</h:head>
+ 
+ 	<f:view>
+		<h:body onload="cargar();">
+			<h:form id="formularioAdminParametros" enctype="multipart/form-data">
+			<h:inputHidden id="ipValue" value="#{pc_AdministrarParametrosWPView.ip }"/>
+				<p:messages id="mensaje" autoUpdate="true" closable="true"/>				
+				<p:panel id="panelGeneral"  header="Administración de Parámetros"  style="width: 1100px">
+					<p:panel>
+						<h:panelGrid columns="3" style="width:50%;">
+						<h:outputLabel value="Parámetro :"/>
+						<p:selectOneMenu id="parametros" value="#{pc_AdministrarParametrosWPView.parametroSelected}" style="width: 180px;">
+							<f:selectItem itemLabel="Seleccione uno " itemValue=""/>
+							<f:selectItems value="#{pc_AdministrarParametrosWPView.listaParametro}" var="p" itemLabel="#{p.parametroNombre}" itemValue="#{p.idParametro}"/>
+						</p:selectOneMenu>
+						<p:commandButton value="Consultar" actionListener="#{pc_AdministrarParametrosWPView.onParametroChange}" update="panelFiltros panelResultado mensaje"
+							onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>
+						</h:panelGrid>
+						<br/>
+						
+<!-- 						<p:outputPanel id="imagendecodePanel"> -->
+<!-- 								<h:outputLabel value="Imagen *:"/> -->
+<!-- 									<input type="file" name="uploadFile" accept=".jpg, .png"/> -->
+<!-- 								<p:graphicImage id="imagendecode" value="#{pc_AdministrarParametrosWPView.imgCargar}" width="80" height="80"/> -->
+<!-- 								<p:commandButton ajax="false" process="@form" update="imagendecode imagendecodePanel"/> -->
+								
+<!-- 								<p:fileUpload /> -->
+<!--  		                        </p:outputPanel> -->
+ 		                        
+ 		                        
+						<p:outputPanel id="panelFiltros">
+							<p:panel header="#{pc_AdministrarParametrosWPView.headerFilstros}" rendered="#{pc_AdministrarParametrosWPView.panelConsulta}" style="margin-bottom: 1%;">
+								<h:panelGrid columns="4" style="width:100%;" rendered="#{pc_AdministrarParametrosWPView.filtrosEntidad }">
+									<h:outputLabel value="Código Compensación (FIID) *:"/>
+									<h:inputText id="campoFiid" value="#{pc_AdministrarParametrosWPView.fiid}" maxlength="3">
+									<p1:keyFilter regEx="/[\d\-\.]/" />
+									<p1:tooltip for="campoFiid" value="Ingrese el código FIID correspondiente a la Entidad" />
+									</h:inputText>
+									
+									<h:outputLabel value="Nombre Entidad *:"/>
+									<h:inputText id="campoNomEntidad" value="#{pc_AdministrarParametrosWPView.nombreEntidad}" maxlength="25">
+											<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+								</h:inputText>
+									<p1:tooltip for="campoNomEntidad" value="Ingrese el nombre de la Entidad para el sistema “Mov TrxPrepago Web”"/>
+									
+								</h:panelGrid>
+								
+								<h:panelGrid columns="6" style="width:50%;" rendered="#{pc_AdministrarParametrosWPView.filtrosTipoTarjeta}">
+									<h:outputLabel value="Nombre del Tipo de Tarjeta *:"/>
+									<h:inputText id="campoNombreTipoTar" value="#{pc_AdministrarParametrosWPView.nombreTipoTar}" maxlength="25">
+											<p1:keyFilter regEx="/[a-z0-9\s]/i" />	
+									<p1:tooltip for="campoNombreTipoTar" value="Ingrese Tipo de tarjeta"/>
+									</h:inputText>
+									
+								</h:panelGrid>
+								
+								<p:outputPanel>
+								<h:panelGrid columns="6" style="width:100%;" rendered="#{pc_AdministrarParametrosWPView.filtrosBIN}">
+									<h:outputLabel value="Código BIN *:"/>
+									<h:inputText id="campoCodigoBin" value="#{pc_AdministrarParametrosWPView.codigoBin}" maxlength="11">
+									<p:ajax event="blur" listener="#{pc_AdministrarParametrosWPView.x}"/>
+									<p1:tooltip for="campoCodigoBin" value="Ingrese el código BIN  que va a parametrizar"/>
+									<p1:keyFilter regEx="/[\d\-\.]/"/>
+									</h:inputText>
+									
+									<h:outputLabel value="Rango Inicial *:"/>
+									<h:panelGrid> <!-- Sin este panelGrid el campo se ve desalineado con el input de  Entidad-->
+									<h:inputText id="campoRangoIni" value="#{pc_AdministrarParametrosWPView.rangoInicial}" maxlength="19">
+									<p:ajax event="blur" listener="#{pc_AdministrarParametrosWPView.x}"/>
+									<p1:tooltip for="campoRangoIni" value="Ingrese el rango inicial del número de tarjeta"/>
+									<p1:keyFilter regEx="/[\d\-\.]/"/>
+									</h:inputText>
+									</h:panelGrid>
+									
+									<h:outputLabel value="Rango Final *:"/>
+									<h:panelGrid> <!-- Sin este panelGrid el campo se ve desalineado con el input de Tipo Tarjeta-->
+									<h:inputText id="campoRangoFin" value="#{pc_AdministrarParametrosWPView.rangoFinal}" maxlength="19">
+									<p:ajax event="blur" listener="#{pc_AdministrarParametrosWPView.validarLongitud}" update="mensaje campoLongitudTar"/>
+									<p1:tooltip for="campoRangoFin" value="Ingrese el rango final del número de tarjeta"/>
+									<p1:keyFilter regEx="/[\d\-\.]/"/>
+									</h:inputText>
+									</h:panelGrid>
+									
+									<h:outputLabel value="Longitud Tarjeta *:"/>
+									<h:inputText disabled="true" id="campoLongitudTar" value="#{pc_AdministrarParametrosWPView.longitudTar}" maxlength="25">
+									
+									</h:inputText>
+									
+									
+									<h:outputLabel value="Entidad *:"/>	
+									<h:panelGrid id="selectEntidad" >								
+									<p:selectOneMenu id="autocomEntidad" value="#{pc_AdministrarParametrosWPView.entidadSelected}" rendered="#{pc_AdministrarParametrosWPView.filtrosBIN}">
+											
+									<f:selectItem itemLabel="Seleccione uno" itemValue=""/>
+									<f:selectItems var="ent" value="#{pc_AdministrarParametrosWPView.listaEntidad}" itemLabel="#{ent.nombre}" itemValue="#{ent.id}"/>
+									<p:ajax event="change" listener="#{pc_AdministrarParametrosWPView.x}"/>
+									</p:selectOneMenu>	
+									<p1:tooltip for="selectEntidad" value="Ingrese entidad asociada al BIN que se está parametrizando"/>
+									</h:panelGrid>
+									
+									
+									<h:outputLabel value="Tipo tarjeta"/>
+									<h:panelGrid id="selectTipoTarjeta" >								
+									<p:selectOneMenu id="tipoTarLista" value="#{pc_AdministrarParametrosWPView.tipoTarjetaSelected}">
+										<f:selectItem itemValue="" itemLabel="Seleccione uno"/>
+										<f:selectItems value="#{pc_AdministrarParametrosWPView.listaTipoTarjeta}" var="tiptar" itemLabel="#{tiptar.nombre}" itemValue="#{tiptar.id}"/>
+										<p1:tooltip for="tipoTarLista" value="Seleccione el tipo de tarjeta asociado al BIN que se está parametrizando."/>
+										<p:ajax event="change" listener="#{pc_AdministrarParametrosWPView.x}"/>
+									</p:selectOneMenu>
+									<p1:tooltip for="selectTipoTarjeta" value="Seleccione el tipo de tarjeta asociado al BIN que se está parametrizando."/>
+									</h:panelGrid>
+									
+								</h:panelGrid>
+								<h:panelGrid id="imagenCargar" columns="6" style="width:94%;" rendered="#{pc_AdministrarParametrosWPView.filtrosBIN}">
+									<h:outputLabel value="Imagen *:"/>
+									<h:panelGrid id ="selectImagen">
+									<input type="file"  title='Seleccione Una imagen correspondiente a la entidad asociada al BIN que se está parametrizando.' 
+										name="uploadFile" accept=".jpg, .png">  
+									
+									</input>
+									</h:panelGrid>
+									
+								</h:panelGrid>
+									<br/>
+								</p:outputPanel>
+								
+								<p:outputPanel>
+									<h:panelGrid id="panelEliminarAutomatica" rendered="#{pc_AdministrarParametrosWPView.mostrarPanelEliminarAuto}" columns="2">
+										<h:outputLabel value="Seleccionar días evaluación notificación"/>
+										<p:selectOneMenu id="listaDiasNotificar" value="#{pc_AdministrarParametrosWPView.diasNotificasSelected}">
+											<f:selectItem itemValue="" itemLabel="Seleccione uno"/>
+											<f:selectItems value="#{pc_AdministrarParametrosWPView.listaDiasNotificar}" var="diasNoti" itemLabel="#{diasNoti}" itemValue="#{diasNoti}">
+												<p1:tooltip for="listaDiasNotificar" value="Seleccione la cantidad de días a evaluar la notificación de usuarios inactivos"/>
+											</f:selectItems>
+										</p:selectOneMenu>
+										
+										<h:outputLabel value="Seleccionar días evaluación eliminación"/>
+										<p:selectOneMenu id="listaDiasEliminar" value="#{pc_AdministrarParametrosWPView.diasEliminarSelected}">
+											<f:selectItem itemValue="" itemLabel="Seleccione uno"/>
+											<f:selectItems value="#{pc_AdministrarParametrosWPView.listaDiasEliminar}" var="diasEliminar" itemLabel="#{diasEliminar}" itemValue="#{diasEliminar}">
+												<p1:tooltip for="listaDiasEliminar" value="Seleccione la cantidad de días a evaluar la eliminación de usuarios inactivos"/>
+											</f:selectItems>
+										</p:selectOneMenu>
+										
+										<h:outputLabel value="Correo electrónico envío usuarios eliminados o notificados: *"/>
+										<h:inputText id="inputCorreosNotificar" value="#{pc_AdministrarParametrosWPView.correosNotficar }">
+											<p1:tooltip for="inputCorreosNotificar" value="Ingrese los correos para notifiar la depuración"/>
+										</h:inputText>										
+									</h:panelGrid>
+								</p:outputPanel>
+								
+								<h:panelGrid id="panelBolsillo" columns="4" style="width:100%;" rendered="#{pc_AdministrarParametrosWPView.filtrosBolsillo}">
+									<h:outputLabel value="Bolsillo: "/>
+									<h:inputText id="campoBolsillo" value="#{pc_AdministrarParametrosWPView.campoBolsillo}" >
+										<p1:tooltip for="campoBolsillo" value="Ingrese el nombre del bolsillo a registrar"/>
+										<p1:keyFilter regEx="/[a-z0-9\s]/i"/>
+										<f:ajax event="click" listener="#{pc_AdministrarParametrosWPView.clicBin }"/>
+									</h:inputText>
+									
+									<h:outputLabel value="Código Bolsillo: "/>
+									<h:inputText id="campocodigoBolsillo" value="#{pc_AdministrarParametrosWPView.campoCodigoBolsillo}" maxlength="6">
+										<p1:tooltip for="campocodigoBolsillo" value="Ingrese el código del bolsillo a registrar"/>
+										<p1:keyFilter regEx="/[\d\-\.]/"/>
+									</h:inputText>
+								</h:panelGrid>
+								
+								<h:panelGrid id="panelBinXBolsillo" columns="4" style="width:100%;" rendered="#{pc_AdministrarParametrosWPView.filtrosBinxBolsillo}">
+									<h:outputLabel value="BIN: *"/>
+									<p:autoComplete id="autoComplete" value="#{pc_AdministrarParametrosWPView.itemBinEntidadSelected}" converter="ItemDescripcionConverter"
+										var="item" itemLabel="#{item.codigo}#{item.nombre}" itemValue="#{item}" completeMethod="#{pc_AdministrarParametrosWPView.completeItem}"
+										forceSelection="true">
+										<p1:tooltip for="autoComplete" value="Ingrese el Bin a asociar"/>
+									</p:autoComplete>
+									
+									<h:outputLabel value="Bolsillo: *"/>
+									<p:selectOneMenu id="campoListaBolsillo" value="#{pc_AdministrarParametrosWPView.bolsilloSelected }">
+										<f:selectItem itemValue="" itemLabel="Seleccione uno"/>
+										<f:selectItems value="#{pc_AdministrarParametrosWPView.listaBolsillos}" var="bol" itemLabel="#{bol.nombre}" itemValue="#{bol.id}">
+											<p1:tooltip for="campoListaBolsillo" value="Seleccione el bolsillo a asociar"/>
+										</f:selectItems>
+									</p:selectOneMenu>
+								</h:panelGrid>
+								
+								<p:commandButton value="Agregar" style="margin: 1%;" rendered="#{pc_AdministrarParametrosWPView.botonAgregarBin}" update="panelFiltros panelResultado mensaje imagendecode imagendecodePanel" ajax="false" process="@form" onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>
+								<p:commandButton value="Agregar" style="margin: 1%;" rendered="#{pc_AdministrarParametrosWPView.botonAgregar}" actionListener="#{pc_AdministrarParametrosWPView.agregarParametro}" update="panelFiltros panelResultado mensaje" onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>
+								<p:commandButton value="Modificar" style="margin: 1%;" rendered="#{pc_AdministrarParametrosWPView.botonModificar}" actionListener="#{pc_AdministrarParametrosWPView.modificarParametro}" update="panelFiltros panelResultado mensaje" onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>
+								<p:commandButton value="Modificar" style="margin: 1%;" rendered="#{pc_AdministrarParametrosWPView.botonModificarBin}" update="panelFiltros panelResultado mensaje imagendecode imagendecodePanel" ajax="false" process="@form" onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>
+								<p:commandButton value="Confirmar" style="margin: 1%;" rendered="#{pc_AdministrarParametrosWPView.mostrarPanelEliminarAuto}" actionListener="#{pc_AdministrarParametrosWPView.confirmarParametrosTarea }" update="mensaje" onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>
+								<p:commandButton value="Cancelar" style="margin: 1%;" rendered="#{pc_AdministrarParametrosWPView.panelConsulta}" actionListener="#{pc_AdministrarParametrosWPView.botonCancelar}" update="panelFiltros panelResultado mensaje" onstart="statusDialog.show()" oncomplete="statusDialog.hide();"/>								
+								
+							</p:panel>
+							
+						</p:outputPanel>
+						
+						<p:outputPanel id="panelResultado">
+							<p:dataTable  style="width:100%;" id="tablaRegistrosEntidad" value="#{pc_AdministrarParametrosWPView.listaEntidad}" var="reg" 
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		 					resizableColumns="true" paginatorPosition="bottom" rows="10" paginator="true" rowsPerPageTemplate="5,10,15"
+		 					rendered="#{pc_AdministrarParametrosWPView.filtrosEntidad }">
+		 				
+								<f:facet name="header">Listado Entidades</f:facet>
+		                        <br/>
+		                                    
+								<p:column headerText="Código Compensación (FIID)" style="text-align:center">
+		                        	<h:outputText value="#{reg.codigo}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Nombre Entidad" style="text-align:center">
+		                        	<h:outputText value="#{reg.nombre}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Editar" style="text-align:center">
+		                        	<p:commandLink actionListener="#{pc_AdministrarParametrosWPView.modificar(reg)}" update=":formularioAdminParametros:panelFiltros" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+                                    	<p:graphicImage value="resoruces/imagenes/modify.png" library="imagenes" name="modify.png" />
+                                    </p:commandLink>
+		                        </p:column>  
+		                        
+		                        <p:column headerText="Eliminar" styleClass="Eliminar" style="text-align:center;">
+			                          <p:commandLink  actionListener="#{pc_AdministrarParametrosWPView.eliminarEntidad(reg)}" update=":formularioAdminParametros:panelFiltros :formularioAdminParametros:panelResultado :formularioAdminParametros:mensaje :formularioAdminParametros:tablaRegistrosEntidad" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+			                            <p:graphicImage value="resoruces/imagenes/Close.png" library="imagenes" name="papelera.png" style="width:20px"/>                    			                            
+			                          </p:commandLink>
+			                    </p:column>                     
+	                       	                                    
+	                        </p:dataTable>
+						
+						
+							<p:dataTable  style="width:100%;" id="tablaRegistrosTipoTarjeta" value="#{pc_AdministrarParametrosWPView.listaTipoTarjeta}" var="reg" 
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		 					resizableColumns="true" paginatorPosition="bottom" rows="10" paginator="true" rowsPerPageTemplate="5,10,15"
+		 					rendered="#{pc_AdministrarParametrosWPView.filtrosTipoTarjeta}">
+		 				
+								<f:facet name="header">Listado Tipo de Tarjeta</f:facet>
+		                        <br/>
+		                                    
+								<p:column headerText="Nombre del Tipo de Tarjeta" style="text-align:center">
+		                        	<h:outputText value="#{reg.nombre}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Editar" style="text-align:center">
+		                        	<p:commandLink actionListener="#{pc_AdministrarParametrosWPView.modificarTipoTar(reg)}" update=":formularioAdminParametros:panelFiltros" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+                                    	<p:graphicImage value="resoruces/imagenes/modify.png" library="imagenes" name="modify.png" />
+                                    </p:commandLink>
+		                        </p:column>                       
+	                       	                                    
+	                        </p:dataTable>
+						
+							<p:dataTable  style="width:100%;" id="tablaRegistrosBIN" value="#{pc_AdministrarParametrosWPView.listaBIN}" var="reg" 
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		 					resizableColumns="true" paginatorPosition="bottom" rows="10" paginator="true" rowsPerPageTemplate="5,10,15"
+		 					rendered="#{pc_AdministrarParametrosWPView.filtrosBIN}">
+		 				
+								<f:facet name="header">Listado Códigos BIN</f:facet>
+		                        <br/>
+		                                    
+								<p:column headerText="Código BIN" style="text-align:center">
+		                        	<h:outputText value="#{reg.numero}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Rango Inicial" style="text-align:center">
+		                        	<h:outputText value="#{reg.rangoIni}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Rango Final" style="text-align:center">
+		                        	<h:outputText value="#{reg.rangoFin}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Longitud Tarjeta" style="text-align:center">
+		                        	<h:outputText value="#{reg.longitud}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Entidad" style="text-align:center">
+		                        	<h:outputText value="#{reg.entidad.nombre}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Tipo de Tarjeta" style="text-align:center">
+		                        	<h:outputText value="#{reg.tipoTarjeta.nombre}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Imagen" style="text-align:center">
+ 		                        	<img src="/wps/WebPrepago/images/#{reg.imagen}" width="50" height="50"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Editar" style="text-align:center">
+		                        	<p:commandLink actionListener="#{pc_AdministrarParametrosWPView.modificarBin(reg)}" update=":formularioAdminParametros:panelFiltros" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+                                    	<p:graphicImage value="resoruces/imagenes/modify.png" library="imagenes" name="modify.png" />
+                                    </p:commandLink>
+		                        </p:column>                       
+	                       	                                    
+	                        </p:dataTable>
+	                        
+	                        <p:dataTable style="width:100%;" id="tablaRegistroBolsillo" value="#{pc_AdministrarParametrosWPView.listaBolsillos}" var="reg" 
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		 					resizableColumns="true" paginatorPosition="bottom" rows="10" paginator="true" rowsPerPageTemplate="5,10,15"
+		 					rendered="#{pc_AdministrarParametrosWPView.filtrosBolsillo}">
+		 					
+		 						<f:facet name="header">Listado Bolsillos</f:facet>
+		                        <br/>
+		                                    
+								<p:column headerText="Código Bolsillo" style="text-align:center">
+		                        	<h:outputText value="#{reg.id}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Nombre Bolsillo" style="text-align:center">
+		                        	<h:outputText value="#{reg.nombre}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Editar" style="text-align:center">
+		                        	<p:commandLink actionListener="#{pc_AdministrarParametrosWPView.modificarBolsillo(reg)}" update=":formularioAdminParametros:panelFiltros :formularioAdminParametros:panelBolsillo" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+                                    	<p:graphicImage value="resoruces/imagenes/modify.png" library="imagenes" name="modify.png" />
+                                    </p:commandLink>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Eliminar" styleClass="Eliminar" style="text-align:center;">
+			                          <p:commandLink  actionListener="#{pc_AdministrarParametrosWPView.eliminarBolsillo(reg)}" update=":formularioAdminParametros:panelFiltros :formularioAdminParametros:panelResultado :formularioAdminParametros:mensaje :formularioAdminParametros:tablaRegistroBolsillo" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+			                            <p:graphicImage value="resoruces/imagenes/Close.png" library="imagenes" name="papelera.png" style="width:20px"/>                    			                            
+			                          </p:commandLink>
+			                    </p:column>
+		                        
+	                        </p:dataTable>
+	                        
+	                        <p:dataTable style="width:100%;" id="tablaRegistroBinBolsillo" value="#{pc_AdministrarParametrosWPView.listaBinBolsillos}" var="reg" 
+							paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}"
+		 					resizableColumns="true" paginatorPosition="bottom" rows="10" paginator="true" rowsPerPageTemplate="5,10,15"
+		 					rendered="#{pc_AdministrarParametrosWPView.filtrosBinxBolsillo}">
+	                        	
+	                        	<f:facet name="header">Listado Asociar BIN Bolsillos</f:facet>
+		                        <br/>
+		                        
+		                        <p:column headerText="BIN" style="text-align:center">
+		                        	<h:outputText value="#{reg.bin}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Entidad" style="text-align:center">
+		                        	<h:outputText value="#{reg.entidad}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Cod. Bolsillo" style="text-align:center">
+		                        	<h:outputText value="#{reg.codigoBolsillo}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Nombre Bolsillo" style="text-align:center">
+		                        	<h:outputText value="#{reg.nombreBolsillo}"/>
+		                        </p:column>
+		                        
+		                        <p:column headerText="Editar" style="text-align:center">
+		                        	<p:commandLink actionListener="#{pc_AdministrarParametrosWPView.modificarBinBolsillo(reg)}" update=":formularioAdminParametros:panelFiltros" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+                                    	<p:graphicImage value="resoruces/imagenes/modify.png" library="imagenes" name="modify.png" />
+                                    </p:commandLink>
+		                        </p:column>  
+		                        
+		                        <p:column headerText="Eliminar" styleClass="Eliminar" style="text-align:center;">
+			                          <p:commandLink  actionListener="#{pc_AdministrarParametrosWPView.eliminarBinXBolsillo(reg)}" update=":formularioAdminParametros:panelFiltros :formularioAdminParametros:panelResultado :formularioAdminParametros:mensaje :formularioAdminParametros:tablaRegistroBinBolsillo" onstart="statusDialog.show()" oncomplete="statusDialog.hide();">
+			                            <p:graphicImage value="resoruces/imagenes/Close.png" library="imagenes" name="papelera.png" style="width:20px"/>                    			                            
+			                          </p:commandLink>
+			                    </p:column>
+		                        
+	                        </p:dataTable>
+	                        
+						</p:outputPanel>
+						
+						
+					</p:panel>
+				</p:panel>
+				
+			</h:form>
+			<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    	<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+			</p:dialog>
+		</h:body>
+	</f:view>
+</div>

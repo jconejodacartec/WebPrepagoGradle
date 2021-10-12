@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- escanea cada 30 segundos-->
+<configuration scan="true" scanPeriod="30 seconds"  >
+	<!--    <timestamp key="bySecond" datePattern="yyyyMMdd'T'HHmmss"/>    -->		<appender name="DefAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<file>/IBM/portal/logs/framework.log</file>
+		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">
+			<fileNamePattern>/IBM/portal/logs/framework.%i.log.zip</fileNamePattern>
+			<minIndex>1</minIndex>
+			<maxIndex>5</maxIndex>
+		</rollingPolicy>
+		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">
+			<maxFileSize>2MB</maxFileSize>
+		</triggeringPolicy>
+		<encoder>			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>
+		</encoder>
+	</appender>
+		<appender name="ApacheAppender" class="ch.qos.logback.core.rolling.RollingFileAppender">		<file>/IBM/portal/logs/apache.log</file>		<rollingPolicy class="ch.qos.logback.core.rolling.FixedWindowRollingPolicy">			<fileNamePattern>/IBM/portal/logs/apache.%i.log.zip</fileNamePattern>			<minIndex>1</minIndex>			<maxIndex>5</maxIndex>		</rollingPolicy>		<triggeringPolicy class="ch.qos.logback.core.rolling.SizeBasedTriggeringPolicy">			<maxFileSize>2MB</maxFileSize>		</triggeringPolicy>		<encoder>			<pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %msg%n</pattern>		</encoder>	</appender>		<logger name="org.apache" level="ERROR" additivity="false">		<appender-ref ref="ApacheAppender" />	</logger>	
+	<root level="ERROR">
+		<appender-ref ref="DefAppender" />
+	</root>
+</configuration> 

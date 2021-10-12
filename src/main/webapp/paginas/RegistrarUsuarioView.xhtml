@@ -1,0 +1,419 @@
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/RegistrarUsuarioBean.java" --><!-- /jsf:pagecode -->
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:p1="http://primefaces.org/ui/extensions">
+
+<h:head>
+	<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+	<meta http-equiv="Content-Type"
+		content="application/xhtml+xml; charset=UTF-8" />
+	<h:outputStylesheet library="css" name="Estilos.css" />
+	<h:outputStylesheet library="css" name="bootstrap.css" />
+	<h:outputScript library="javascript" name="bootstrap.js" />
+	<h:outputScript library="javascript" name="funciones.js" />
+	<h:outputScript library="primefaces" name="jquery/jquery.js" />
+
+	<f:facet name="first">
+		<meta name="viewport"
+			content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+	</f:facet>
+	<script language="JavaScript" type="text/javascript">
+		function cargar() {
+			var portletNamespace = "view"
+					+ "#{facesContext.externalContext.response}";
+			var nombreVariable = portletNamespace + ":registroUsuariosForm:";
+			var jqxhr = $
+					.getJSON("https://api.ipify.org?format=json",
+							function(data) {
+								document.getElementById(nombreVariable
+										+ "ipValue").value = data.ip;
+							})
+		}
+
+		window.onload = function() {
+			cargar();
+		}
+		function checkValue(campo){
+		   campo.value= campo.value.replace(/[^A-Za-z0-9]/g, '');
+		 }
+		
+		function cambiarCaptcha(){
+			var url = "/wps/WebPrepago/customCaptchaImg?view=registrarUsuario";
+ 			$('.idimg').attr("src",url);
+		}
+	</script>
+
+</h:head>
+
+
+	<h:body>
+		<div id="overlay" />
+		
+		<div class="row-centered" >
+		
+			<div class="col-md-7  col-centered center-screen" style="">
+	
+		<h:form id="registroUsuariosForm" styleClass="registroUsuariosForm">
+			<h:inputHidden id="ipValue" value="#{pc_RegistrarUsuarioBean.ip}" />
+			<p:messages id="mensajes" autoUpdate="true" closable="true" />
+	
+			<div align="center">
+				<p:panel header="Datos Básicos del Usuario">
+					<div style="margin-left: 15%; margin-right: 15%;">
+						<div class="row">
+							<h:outputLabel value="Tipo de Documento: *" for="listaTipodoc"
+								style="font-weight: bold;" rendered="true"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+								
+							<h:selectOneMenu id="listaTipodoc"
+								styleClass="col-xs-12 col-sm-7"
+								value="#{pc_RegistrarUsuarioBean.tipoDocumentoSelected }" 
+								>
+								
+								<p1:tooltip for="listaTipodoc" 
+								
+									value="Seleccione el tipo de documento con que va a realizar el registro" />
+								<p:ajax listener="#{pc_RegistrarUsuarioBean.onTipoDocChange()}" update="numDocumento mensajes"></p:ajax>	
+								<f:selectItem itemValue="" itemLabel="Seleccione uno"></f:selectItem>
+								<f:selectItems value="#{pc_RegistrarUsuarioBean.listaTipoDoc}"
+									var="tipoDoc" itemValue="#{tipoDoc.id }"
+									itemLabel="#{tipoDoc.descripcion }" />
+								
+							</h:selectOneMenu>
+						</div>
+						<div class="row">
+							<h:outputText value="Número de Documento: *"
+								style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="numDocumento"
+									value="#{pc_RegistrarUsuarioBean.numeroDocumento}" onkeyup="$(this).val($(this).val().replace(/[^\d]/g, ''))"
+									styleClass="col-xs-12 col-sm-7" maxlength="#{pc_RegistrarUsuarioBean.longitudMax}">
+									<p1:keyFilter regEx="#{pc_RegistrarUsuarioBean.numeroDocumentoValidacion}" />
+								</h:inputText>
+								<p1:tooltip for="numDocumento" value="Ingrese número de documento" position="bottom" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputText value="Nombres: *" style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="nombre" autocomplete="false" onkeyup="$(this).val($(this).val().replace(/[^a-zA-Z ]/g, ''))"
+									value="#{pc_RegistrarUsuarioBean.nombres }"
+									styleClass="col-xs-12 col-sm-7" maxlength="25">
+									<p1:keyFilter regEx="/[a-z\s]+/i" />
+								</h:inputText>
+								<p1:tooltip for="nombre" value="Ingrese su(s) nombre(s)" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputText value="Apellidos: *" style="font-weight: bold;"
+								autocomplete="false" styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="apellido" onkeyup="$(this).val($(this).val().replace(/[^a-zA-Z ]/g, ''))"
+									value="#{pc_RegistrarUsuarioBean.apellidos }"
+									styleClass="col-xs-12 col-sm-7" maxlength="25">
+									<p1:keyFilter regEx="/[a-zA-Z ]/" />
+								</h:inputText>
+								<p1:tooltip for="apellido" value="Ingrese su(s) apellido(s)" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputText value="Correo Electrónico: *"
+								style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="correo"
+									value="#{pc_RegistrarUsuarioBean.correoElectronico }"
+									styleClass="col-xs-12 col-sm-7" maxlength="40">
+									<p1:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+								</h:inputText>
+	
+								<p1:tooltip for="correo"
+									value="Ingrese su correo electrónico. Ejemplo: nombre_1@mail.com" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputText value="Confirmar Correo Electrónico: *"
+								style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="confirmaciónCorreo"
+									value="#{pc_RegistrarUsuarioBean.confirmarCorreo }"
+									styleClass="col-xs-12 col-sm-7" maxlength="40">
+									<p1:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+								</h:inputText>
+								<p1:tooltip for="confirmaciónCorreo"
+									value="Confirme su correo electrónico" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputText value="Teléfono Móvil: " style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="numeroTelefono" onkeyup="$(this).val($(this).val().replace(/[^\d]/g, ''))"
+									styleClass="col-xs-12 col-sm-7" maxlength="10">
+									<p1:keyFilter regEx="#{pc_RegistrarUsuarioBean.numeroTelefonoValidacion}" />
+								</h:inputText>
+								<p1:tooltip for="numeroTelefono"
+									value="Ingrese su número de teléfono móvil" />
+							</h:panelGroup>
+						</div>
+					</div>
+				</p:panel>
+	
+				<p:panel header="Preguntas de Seguridad Para Recuperar Contraseña">
+					<div style="margin-left: 15%; margin-right: 15%;">
+						<div class="row">
+							<h:outputLabel value="Pregunta 1: *" for="listaPregunta1"
+								style="font-weight: bold;" rendered="true"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:selectOneMenu
+								value="#{pc_RegistrarUsuarioBean.pregunta1Selected }"
+								id="listaPregunta1"
+								styleClass="col-xs-12 col-sm-7">
+								<f:selectItem itemValue="" itemLabel="Seleccione una"></f:selectItem>
+								<f:selectItems
+									value="#{pc_RegistrarUsuarioBean.listaPreguntas1 }" var="pre1"
+									itemLabel="#{pre1.pregunta }" itemValue="#{pre1.id }" />
+								<p1:tooltip for="listaPregunta1"
+									value="Seleccione una pregunta, ésta se usará en caso de que requiera recuperar su contraseña" />
+							</h:selectOneMenu>
+						</div>
+						<div class="row">
+							<h:outputText value="Respuesta 1: *" style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="respuesta1"
+									value="#{pc_RegistrarUsuarioBean.respuestaUno }" maxlength="15"
+									styleClass="col-xs-12 col-sm-7" >
+									<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+									</h:inputText>
+								<p1:tooltip for="respuesta1"
+									value="Ingrese una respuesta de fácil recordación para la pregunta seleccionada, puede usar hasta 15 caracteres" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputLabel value="Pregunta 2: *" for="listaPregunta2"
+								style="font-weight: bold;" rendered="true"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+	
+							<h:selectOneMenu
+								value="#{pc_RegistrarUsuarioBean.pregunta2Selected }"
+								id="listaPregunta2"
+								styleClass="col-xs-12 col-sm-7">
+								<f:selectItem itemValue="" itemLabel="Seleccione una"></f:selectItem>
+								<f:selectItems
+									value="#{pc_RegistrarUsuarioBean.listaPreguntas2 }" var="pre2"
+									itemLabel="#{pre2.pregunta }" itemValue="#{pre2.id }" />
+								<p1:tooltip for="listaPregunta2"
+									value="Seleccione una pregunta, ésta se usará en caso de que requiera recuperar su contraseña" />
+							</h:selectOneMenu>
+						</div>
+						<div class="row">
+							<h:outputText value="Respuesta 2: *" style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="respuesta2"
+									value="#{pc_RegistrarUsuarioBean.respuestaDos }" maxlength="15"
+									styleClass="col-xs-12 col-sm-7" >
+									<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+									</h:inputText>
+								<p1:tooltip for="respuesta2"
+									value="Ingrese una respuesta de fácil recordación para la pregunta seleccionada, puede usar hasta 15 caracteres" />
+							</h:panelGroup>
+						</div>
+						<div class="row">
+							<h:outputLabel value="Pregunta 3: *" for="listaPregunta3"
+								style="font-weight: bold;" rendered="true"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:selectOneMenu id="listaPregunta3"
+								value="#{pc_RegistrarUsuarioBean.pregunta3 }"
+								styleClass="col-xs-12 col-sm-7">
+								<f:selectItem itemValue="" itemLabel="Seleccione una"></f:selectItem>
+								<f:selectItems
+									value="#{pc_RegistrarUsuarioBean.listaPreguntas3 }" var="pre3"
+									itemLabel="#{pre3.pregunta }" itemValue="#{pre3.id }" />
+								<p1:tooltip for="listaPregunta3"
+									value="Seleccione una pregunta, ésta se usará en caso de que requiera recuperar su contraseña" />
+							</h:selectOneMenu>
+						</div>
+						<div class="row">
+							<h:outputText value="Respuesta 3: *" style="font-weight: bold;"
+								styleClass="col-xs-12 col-sm-5 izquierda" />
+							<h:panelGroup>
+								<h:inputText id="respuesta3"
+									value="#{pc_RegistrarUsuarioBean.respuestaTres }" maxlength="15"
+									styleClass="col-xs-12 col-sm-7" >
+									<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+									</h:inputText>
+								<p1:tooltip for="respuesta3"
+									value="Ingrese una respuesta de fácil recordación para la pregunta seleccionada, puede usar hasta 15 caracteres" />
+							</h:panelGroup>
+						</div>
+					</div>
+				</p:panel>
+	
+				<p:panel id="panelCondicionesReg" header="Condiciones de Registro">
+					<div style="">
+						<div class="row" style="padding:10px" >
+							<p:outputPanel >
+								<h:outputText value="*"
+									style="font-weight: bold;margin-right:10px" />
+								<p:outputPanel id="panelPoliticaDatos">
+									<p:selectBooleanCheckbox id="politicaDatos"
+										value="#{pc_RegistrarUsuarioBean.checkPoliticas }"
+										rendered="true" style="margin-right:10px"
+										disabled="#{pc_RegistrarUsuarioBean.habilitarCheck }" />
+									<p1:tooltip for="panelPoliticaDatos"
+										
+										value="Seleccione si acepta la Política de protección de datos." />
+								</p:outputPanel>
+	
+								<h:outputText value="He leído y acepto la política de privacidad"
+									style="font-weight: bold;margin-right:30px" />
+							</p:outputPanel>
+	
+							<p:commandButton id="botonPoliticas"
+								value="Leer Detalle de Política"
+								onclick="dialogoPoliticasVar.show()" />
+							<p1:tooltip for="botonPoliticas"
+								value="Por favor lea el aviso de privacidad, debe hacer clic en este botón." />
+						</div>
+						
+						
+						<h:panelGrid id="panelCaptcha" style="text-align: center;">
+							<h:commandLink onclick="cambiarCaptcha();">
+								<p:graphicImage id="idCaptcha" styleClass="idimg" value="#{pc_RegistrarUsuarioBean.captchaValue}" style="width: 100%;" cache="false"/>
+								<p:ajax update="idCaptcha" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+							</h:commandLink>
+			 				<p:inputText class="valorCaptcha" id="idValorCaptcha" value="#{pc_RegistrarUsuarioBean.valorCaptcha}" maxlength="15" onkeyup="checkValue(this)">
+								<p1:keyFilter regEx="[a-zA-Z0-9]" preventPaste="true"/>
+							</p:inputText>
+						</h:panelGrid>
+											
+						<br />
+						<div class="row" style="padding-left:10px;padding-right:10px;">
+							<h:outputLabel
+								value="Tenga en cuenta que los campos marcados con (*) son obligatorios."
+								style="font-weight: bold;" rendered="true" />
+						</div>
+						<br />
+						<div class="row">
+							<p:commandButton id="botonRegsitrar" value="Registrar"
+								actionListener="#{pc_RegistrarUsuarioBean.registrarUsuario}"
+								style="margin-right:3%"
+								update="mensajes" ajax="false" onstart="statusDialog.show()" oncomplete="statusDialog.hide()" />
+							<p1:tooltip for="botonRegsitrar"
+								value="Clic para enviar el registro." />
+							<p:commandButton id="botonCancelar" value="Cancelar"
+								actionListener="#{pc_RegistrarUsuarioBean.cancelar }"
+								oncomplete="window.location='#{pc_RegistrarUsuarioBean.urlLogin}'; statusDialog.hide()" onstart="statusDialog.show()"/>
+							<p1:tooltip for="botonCancelar"
+								value="Cancelar registro del usuario" />
+						</div>
+					</div>
+				</p:panel>
+	
+				<p:dialog modal="true" id="dialogoPoliticas" closeOnEscape="true"
+					closable="true" styleClass="dialogo"
+					widgetVar="dialogoPoliticasVar" header="Aviso de Privacidad"
+					scrollable="true" draggable="false">
+	
+					<div align="center">
+						<H4 style="text-align: justify;">
+							Con el fin de ofrecer y mantener la funcionalidad de nuestro
+							aplicativo Movimiento Transaccional Prepago WEB, Redeban
+							Multicolor S.A. (en adelante “Redeban”), como Responsable del
+							Tratamiento de Datos Personales, podrá solicitar y recolectar
+							datos personales de los visitantes a nuestra aplicativo Movimiento
+							Transaccional Prepago WEB, o de usuarios ya registrados o
+							vinculados jurídica y comercialmente con Redeban, que serán
+							incorporados en bases de datos de Redeban, en cumplimiento de la
+							normatividad vigente y las Políticas para el Tratamiento de
+							Información de nuestra empresa.<br /> En este sentido, y en
+							cumplimiento de la normatividad vigente, les manifestamos que, con
+							el ingreso al aplicativo Movimiento Transaccional Prepago WEB de
+							Redeban, y las diferentes plataformas o canales allí habilitados,
+							usted como único titular de sus datos personales, nos está
+							autorizando, de manera consciente, plena e informada, para
+							realizar el tratamiento de sus datos personales que nos
+							proporcione voluntariamente para prestarle los servicios
+							habilitados u ofrecidos a través del aplicativo Movimiento
+							Transaccional Prepago WEB, los cuales serán objeto de tratamiento
+							exclusivamente para las finalidades descritas anteriormente
+							manifestándole que los mismos serán tratados de forma
+							estrictamente privada y confidencial por nuestros funcionarios,
+							asesores, dependientes y terceros encargados, en los términos de
+							la normatividad vigente.<br /> En Redeban estamos comprometidos
+							con salvaguardar la privacidad de sus datos personales, y por ese
+							motivo, los invitamos a leer y conocer nuestras Políticas para el
+							Tratamiento de Información disponibles en el siguiente enlace:
+							www.redebanmulticolor.com.co; recordándole en todo momento que,
+							como titular de la información, usted podrá ejercer los derechos
+							consagrados en la normatividad vigente, en especial los derechos
+							previstos en la Ley 1581 de 2012, concretamente, pero sin
+							limitarse, a los descritos en el Artículo 8 (acceso,
+							rectificación, actualización y supresión), y todas aquellas normas
+							que la reglamenten, adicionen o complementen.<br /> Para prevenir
+							el acceso no autorizado a sus datos personales y con el fin de
+							asegurar que la información sea utilizada para los fines
+							establecidos en este aviso de privacidad, Redeban adoptará las
+							medidas administrativas y tecnológicas necesarias para garantizar
+							la seguridad e integridad de los datos recolectados.<br /> Por
+							último, si usted considera que sus datos personales contenidos en
+							un sistema de información, o en una base de datos de Redeban, debe
+							ser objeto de corrección, actualización o supresión, o cuando
+							adviertan el presunto incumplimiento de cualquiera de los deberes
+							contenidos en la normatividad vigente, podrán presentar un reclamo
+							o solicitud ante Redeban, remitiéndola en una primera instancia a
+							través del siguiente correo electrónico habilitado para el efecto
+							por Redeban: protecciondatos@rbm.com.co (en adelante el “Correo
+							Electrónico Autorizado”). Redeban atenderá y dará respuesta a los
+							reclamos o solicitudes en los plazos y términos establecidos para
+							el efecto por la legislación vigente. Sin perjuicio de lo
+							anterior, y en el evento que no haya sido atendida su solicitud o
+							reclamo por parte de Redeban, podrá en todo caso acudir
+							posteriormente en una segunda instancia, ante la Superintendencia
+							de Industria y Comercio (www.sic.gov.co). En dicho evento, para la
+							presentación del reclamo ante la Superintendencia de Industria y
+							Comercio se tomará en consideración la naturaleza de la
+							información, siendo procedente dicha solicitud cuando la
+							información: (i) no tenga el carácter de información pública o se
+							trate de un dato público, y (ii) Redeban esté en violación de los
+							principios aplicables para la información pública o del dato
+							público.<br />
+	
+						</H4>
+					</div>
+					<div align="center">
+						<p:panelGrid id="displayConfirmacion" columns="2"
+							styleClass="noBorders">
+							<p:commandButton value="Volver" id="volver"
+								actionListener="#{pc_RegistrarUsuarioBean.cerrarDialogo}"
+								immediate="true" update="registroUsuariosForm:politicaDatos" onstart="statusDialog.show()" oncomplete="statusDialog.hide()" />
+							<p1:tooltip for="volver"
+								value="Clic para regresar al formulario de registro." />
+	
+						</p:panelGrid>
+					</div>
+				</p:dialog>
+	
+			</div>
+	
+	
+	
+		</h:form>
+		</div>
+		</div>
+		<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		   	<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+		</p:dialog>
+		
+	</h:body>
+
+
+</html>

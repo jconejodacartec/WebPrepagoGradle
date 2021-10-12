@@ -1,0 +1,32 @@
+
+rootProject.name = 'WebPrepago'
+
+//Proyectos
+
+//Proyectos Externos
+
+include ':EhCache'
+include ':UtilidadesIBM'
+include ':LogHandlerClient'
+include ':LogHandlerLib'
+include ':AdministradorUsuariosLdap'
+include ':AuditHandlerLib'
+include ':GestorReportes'
+include ':UtilidadesCalendario'
+include ':GeneradorCorreo'
+
+/*
+ * Definición las rutas de directorio base
+ */
+
+//Proyectos Externos
+
+project(':EhCache').projectDir = new File('../Comunes/EhCache')
+project(':UtilidadesIBM').projectDir = new File('../Comunes/UtilidadesIBM')
+project(':LogHandlerClient').projectDir = new File('../Comunes/LogHandlerClient')
+project(':LogHandlerLib').projectDir = new File('../Comunes/LogHandlerLib')
+project(':AdministradorUsuariosLdap').projectDir = new File('../Comunes/AdministradorUsuariosLdap')
+project(':AuditHandlerLib').projectDir = new File('../Comunes/AuditHandlerLib')
+project(':GestorReportes').projectDir = new File('../Comunes/GestorReportes')
+project(':UtilidadesCalendario').projectDir = new File('../Comunes/UtilidadesCalendario')
+project(':GeneradorCorreo').projectDir = new File('../Comunes/GeneradorCorreo')

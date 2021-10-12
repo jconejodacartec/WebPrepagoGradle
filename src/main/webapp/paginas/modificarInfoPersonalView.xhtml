@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/ModificarInfoPersonalBean.java" --><!-- /jsf:pagecode -->
+ <html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:f="http://java.sun.com/jsf/core"
+	xmlns:h="http://java.sun.com/jsf/html" 
+	xmlns:p="http://primefaces.org/ui"
+	xmlns:p1="http://primefaces.org/ui/extensions">
+	  
+	<h:head>
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+		<meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+		<h:outputStylesheet library="css" name="Estilos.css" />
+		<h:outputStylesheet library="css" name="bootstrap.css" />
+		<h:outputScript library="javascript" name="bootstrap.js" />
+		<h:outputScript library="javascript" name="funciones.js" />
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />
+		
+		<f:facet name="first">
+		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1" />
+		</f:facet>
+		
+		<script language="JavaScript" type="text/javascript">
+		$(document).ready(
+		var portletNamespace = "view" + "#{facesContext.externalContext.response.namespace}";
+			var nombreVariable = portletNamespace + ":modificarInfoUsrForm:";
+			var jqxhr = $.getJSON("https://api.ipify.org?format=json",function(data) {
+								document.getElementById(nombreVariable + "ipValue").value = data.ip;
+							})
+		);
+		function cargar() {
+			var portletNamespace = "view" + "#{facesContext.externalContext.response.namespace}";
+			var nombreVariable = portletNamespace + ":modificarInfoUsrForm:";
+			var jqxhr = $.getJSON("https://api.ipify.org?format=json",function(data) {
+								document.getElementById(nombreVariable + "ipValue").value = data.ip;
+							})
+		}
+		function checkValue(campo){
+		   campo.value= campo.value.replace(/[^A-Za-z0-9]/g, '');
+		}
+		window.onload = function(){
+				cargar();
+				
+				
+			}
+		</script>
+		
+	</h:head>  
+	
+	<h:body>
+		<div id="overlay" />
+		<div class="row-centered" >
+			<div class="col-md-7 center-screen" style="">
+				<h:form id="modificarInfoUsrForm" styleClass="registroUsuariosForm">
+					<h:inputHidden id="ipValue" value="#{pc_ModificarInfoPersonalBean.ip}" />
+					<p:messages id="mensajes" autoUpdate="true" closable="true" />
+					
+					<div align="center">
+						<p:panel header="Datos Básicos del Usuario">
+							<div style="margin-left: 15%; margin-right: 15%;">
+								<div class="row">
+									<h:outputLabel value="Tipo de Documento: *" for="listaTipodoc" style="font-weight: bold;" rendered="true" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:selectOneMenu id="listaTipodoc" styleClass="col-xs-12 col-sm-7" value="#{pc_ModificarInfoPersonalBean.tipoDocumentoSelected }" disabled="true">
+										<p1:tooltip for="listaTipodoc" value="Seleccione el tipo de documento con que va a realizar el registro" />	
+										<f:selectItem itemValue="" itemLabel="Seleccione uno"></f:selectItem>
+										<f:selectItems value="#{pc_ModificarInfoPersonalBean.listaTipoDoc}" var="tipoDoc" itemValue="#{tipoDoc.id }" itemLabel="#{tipoDoc.descripcion }" />
+									</h:selectOneMenu>
+								</div>
+								<div class="row">
+									<h:outputText value="Número de Documento: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="numDocumento" value="#{pc_ModificarInfoPersonalBean.numeroDocumento}" styleClass="col-xs-12 col-sm-7" disabled="true"/>
+										<p1:tooltip for="numDocumento" value="Ingrese número de documento" position="bottom" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputText value="Nombres: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="nombre" autocomplete="false" onkeyup="$(this).val($(this).val().replace(/[^a-zA-Z ]/g, ''))" value="#{pc_ModificarInfoPersonalBean.nombres }" styleClass="col-xs-12 col-sm-7" maxlength="25">
+											<p1:keyFilter regEx="/[a-z\s]+/i" />
+										</h:inputText>
+										<p1:tooltip for="nombre" value="Ingrese su(s) nombre(s)" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputText value="Apellidos: *" style="font-weight: bold;" autocomplete="false" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="apellido" onkeyup="$(this).val($(this).val().replace(/[^a-zA-Z ]/g, ''))" value="#{pc_ModificarInfoPersonalBean.apellidos }" styleClass="col-xs-12 col-sm-7" maxlength="25">
+											<p1:keyFilter regEx="/[a-zA-Z ]/" />
+										</h:inputText>
+										<p1:tooltip for="apellido" value="Ingrese su(s) apellido(s)" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputText value="Correo Electrónico: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="correo" value="#{pc_ModificarInfoPersonalBean.correoElectronico }" styleClass="col-xs-12 col-sm-7" maxlength="40">
+											<p1:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+										</h:inputText>
+										<p1:tooltip for="correo" value="Ingrese su correo electrónico. Ejemplo: nombre_1@mail.com" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputText value="Confirmar Correo Electrónico: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="confirmaciónCorreo" value="#{pc_ModificarInfoPersonalBean.confirmarCorreo }" styleClass="col-xs-12 col-sm-7" maxlength="40">
+											<p1:keyFilter regEx="/[a-z0-9_\.\-@]/i" />
+										</h:inputText>
+										<p1:tooltip for="confirmaciónCorreo" value="Confirme su correo electrónico" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputText value="Teléfono Móvil: *" style="font-weight: bold;"
+										styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="numeroTelefono" value="#{pc_ModificarInfoPersonalBean.telefono}" onkeyup="$(this).val($(this).val().replace(/[^\d]/g, ''))"
+											styleClass="col-xs-12 col-sm-7" maxlength="10">
+											<p1:keyFilter regEx="#{pc_ModificarInfoPersonalBean.numeroTelefonoValidacion}" />
+										</h:inputText>
+										<p1:tooltip for="numeroTelefono"
+											value="Ingrese su número de teléfono móvil" />
+									</h:panelGroup>
+								</div>
+							</div>
+						</p:panel>
+						<p:panel header="Preguntas de Seguridad Para Recuperar Contraseña">
+							<div style="margin-left: 15%; margin-right: 15%;">
+								<div class="row">
+									<h:outputLabel value="Pregunta 1: *" for="listaPregunta1" style="font-weight: bold;" rendered="true"
+										styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:selectOneMenu value="#{pc_ModificarInfoPersonalBean.pregunta1Selected }" id="listaPregunta1"
+										styleClass="col-xs-12 col-sm-7">
+									<f:selectItem itemValue="" itemLabel="Seleccione una"/>
+									<f:selectItems value="#{pc_ModificarInfoPersonalBean.listaPreguntas1 }" var="pre1" itemLabel="#{pre1.pregunta }" itemValue="#{pre1.id }" />
+										<p1:tooltip for="listaPregunta1" value="Seleccione una pregunta, ésta se usará en caso de que requiera recuperar su contraseña" />
+									</h:selectOneMenu>
+								</div>
+								<div class="row">
+									<h:outputText value="Respuesta 1: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="respuesta1" value="#{pc_ModificarInfoPersonalBean.respuestaUno }" maxlength="15"
+											styleClass="col-xs-12 col-sm-7" >
+											<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+										</h:inputText>
+										<p1:tooltip for="respuesta1" value="Ingrese una respuesta de fácil recordación para la pregunta seleccionada, puede usar hasta 15 caracteres" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputLabel value="Pregunta 2: *" for="listaPregunta2" style="font-weight: bold;" rendered="true"
+										styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:selectOneMenu value="#{pc_ModificarInfoPersonalBean.pregunta2Selected }" id="listaPregunta2"
+										styleClass="col-xs-12 col-sm-7">
+										<f:selectItem itemValue="" itemLabel="Seleccione una"/>
+										<f:selectItems value="#{pc_ModificarInfoPersonalBean.listaPreguntas2 }" var="pre2" itemLabel="#{pre2.pregunta }" itemValue="#{pre2.id }" />
+										<p1:tooltip for="listaPregunta2" value="Seleccione una pregunta, ésta se usará en caso de que requiera recuperar su contraseña" />
+									</h:selectOneMenu>
+								</div>
+								<div class="row">
+									<h:outputText value="Respuesta 2: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="respuesta2" value="#{pc_ModificarInfoPersonalBean.respuestaDos }" maxlength="15"
+											styleClass="col-xs-12 col-sm-7" >
+											<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+										</h:inputText>
+										<p1:tooltip for="respuesta2" value="Ingrese una respuesta de fácil recordación para la pregunta seleccionada, puede usar hasta 15 caracteres" />
+									</h:panelGroup>
+								</div>
+								<div class="row">
+									<h:outputLabel value="Pregunta 3: *" for="listaPregunta3" style="font-weight: bold;" rendered="true"
+										styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:selectOneMenu id="listaPregunta3" value="#{pc_ModificarInfoPersonalBean.pregunta3 }" styleClass="col-xs-12 col-sm-7">
+										<f:selectItem itemValue="" itemLabel="Seleccione una"/>
+										<f:selectItems value="#{pc_ModificarInfoPersonalBean.listaPreguntas3 }" var="pre3" itemLabel="#{pre3.pregunta }" itemValue="#{pre3.id }" />
+										<p1:tooltip for="listaPregunta3" value="Seleccione una pregunta, ésta se usará en caso de que requiera recuperar su contraseña" />
+									</h:selectOneMenu>
+								</div>
+								<div class="row">
+									<h:outputText value="Respuesta 3: *" style="font-weight: bold;" styleClass="col-xs-12 col-sm-5 izquierda" />
+									<h:panelGroup>
+										<h:inputText id="respuesta3" value="#{pc_ModificarInfoPersonalBean.respuestaTres }" maxlength="15"
+											styleClass="col-xs-12 col-sm-7" >
+											<p1:keyFilter regEx="/[a-z0-9\s]/i" />
+										</h:inputText>
+										<p1:tooltip for="respuesta3" value="Ingrese una respuesta de fácil recordación para la pregunta seleccionada, puede usar hasta 15 caracteres" />
+									</h:panelGroup>
+								</div>
+							</div>
+						</p:panel>
+						<p:panel id="panelConfirmar" header="Confirmación">
+							<div class="row" style="padding:10px" >
+								<p:commandButton id="botonRegsitrar" value="Aceptar" style="margin-right:3%" 
+									update="mensajes" actionListener="#{pc_ModificarInfoPersonalBean.validarDatos}" 
+									oncomplete="statusDialog.hide()" onstart="statusDialog.show()"/>
+								<p1:tooltip for="botonRegsitrar" value="Clic para enviar el registro." />
+								<p:commandButton id="botonCancelar" value="Cancelar" oncomplete="statusDialog.hide()" onstart="statusDialog.show()"
+									actionListener="#{pc_ModificarInfoPersonalBean.cancelarModificarInfo}" update="modificarInfoUsrForm"/>
+								<p1:tooltip for="botonCancelar" value="Cancelar registro del usuario" />
+							</div>
+						</p:panel>
+					</div>
+					
+					<p:dialog id="dialogConfimar" closable="true" closeOnEscape="true" modal="ture" header="Confirmar actualización" 
+						position="center center" widgetVar="varDialogConfirmar" style="z-index: 1010;">
+						<div class="row">
+							<p:panelGrid columns="2" styleClass="noBorders">
+								<h:outputLabel value="Contraseña"/>
+								<p:password value="#{pc_ModificarInfoPersonalBean.campoPass}" maxlength="25" autocomplete="off"/>
+								
+								<p:commandButton id="botonConfirmar" value="Aceptar" style="margin-right:3%" update="mensajes"
+									actionListener="#{pc_ModificarInfoPersonalBean.confirmarModificar}" onstart="statusDialog.show()" oncomplete="varDialogConfirmar.hide(); statusDialog.hide()">
+									<p1:tooltip for="botonConfirmar" value="Clic para enviar el registro." />
+								</p:commandButton>
+								<p:commandButton id="botonCancelarConfirmar" value="Cancelar" onclick="varDialogConfirmar.hide()">
+									<p1:tooltip for="botonCancelarConfirmar" value="Cancelar registro del usuario" />
+								</p:commandButton>
+							</p:panelGrid>
+						</div>
+					
+					</p:dialog>
+					
+				</h:form>
+				<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    		<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+				</p:dialog>
+			</div>
+		</div>
+	</h:body>
+
+
+</html>

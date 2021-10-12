@@ -1,0 +1,231 @@
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/AdministrarTarjetaBean.java" --><!-- /jsf:pagecode -->
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:h="http://java.sun.com/jsf/html" 
+      xmlns:portlet="http://java.sun.com/portlet_2_0"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:pe="http://primefaces.org/ui/extensions"
+      xmlns:p1="http://primefaces.org/ui/extensions"> 
+      
+      <f:event type="preRenderView" listener="#{pc_AdministrarTarjetaBean.buscarTarjetas}" />
+       
+  <h:head>		
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+        <meta http-equiv="Content-Type" content="application/xhtml+xml; charset=UTF-8" />
+        <h:outputStylesheet library="css" name="Estilos.css"/>	  
+		<h:outputStylesheet library="css" name="bootstrap.css" />         
+        <h:outputScript library="javascript" name="bootstrap.js" />
+		<h:outputScript library="javascript" name="funciones.js" />	   
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />	
+		
+		<f:facet name="first">
+            <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1"/>            
+        </f:facet>
+		<script language="JavaScript" type="text/javascript">
+			function cargar(){
+				var portletNamespace = "view" + "#{facesContext.externalContext.response.namespace}";
+				var nombreVariable = portletNamespace + ":formularioAdministrarTarjeta:";
+				
+				var jqxhr = $.getJSON( "https://api.ipify.org?format=json", function(data) {
+					document.getElementById(nombreVariable+"ipValue").value = data.ip;
+				})
+				
+				document.getElementById(nombreVariable+"numCelular").setAttribute("autocomplete", "off");
+			}
+			window.onload = function(){
+				cargar();
+				
+				
+			}
+		</script>
+				<script type="text/javascript">
+			var namespace = "view" + "${facesContext.externalContext.response.namespace}"+":formularioAdminParametros";
+			$( document ).ready(function() {
+				var msj = "#{pc_AdministrarParametrosWPView.msjCarga}";
+				var type = "#{pc_AdministrarParametrosWPView.typeMsjCarga}";
+	
+				if(msj.length > 0){
+					var div = $(document.createElement('div')).addClass('ui-messages-'+type+' ui-corner-all');
+					var span1 = $(document.createElement('span')).addClass('ui-messages-'+type+'-icon');
+					var ul = $(document.createElement('ul'));
+					var li = $(document.createElement('li'));
+					var span2 = $(document.createElement('span')).addClass('ui-messages-'+type+'-summary').html(msj);
+					
+					div.append(span1);
+					li.append(span2);
+					ul.append(li);
+					div.append(ul);
+					$('.ui-messages').append(div);
+	
+				}
+			});
+			
+			$( "a" ).click(function() {
+				var btnClean = document.getElementById(namespace+":botonClean");
+				btnClean.click();
+			});
+		</script>
+		
+		<meta http-equiv="Content-Type"
+				content="application/xhtml+xml; charset=UTF-8" />
+	</h:head>
+  
+  <f:view>
+		<h:body onload="cargar();">
+			<h:form id="formularioAdministrarTarjeta" styleClass="formularioAdministrarTarStyle">
+			<h:inputHidden id="ipValue" value="#{pc_AdministrarTarjetaBean.ip}"/>
+			<p:messages id="mensaje" closable="true" autoUpdate="true"/>
+				<p:panel id="panelGeneral" header="Administrar Tarjetas" >
+					<div class="row">
+						
+						<h:outputLabel id="botonInscribirl" styleClass="col-xs-12 col-sm-2 col-md-2 col-lg-2 botonMargen btn" style="padding: 0px; display:block !important">
+							<p:commandButton id="botonInscribir" value="Inscribir Tarjeta" style="width:100%"  
+										actionListener="#{pc_AdministrarTarjetaBean.InscribirTarjeta }" update="panelInscribirTarjetas botonInscribir" 
+										disabled="#{pc_AdministrarTarjetaBean.deshabilitarBtnInscribir }" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+						</h:outputLabel>				
+						<pe:tooltip for="botonInscribirl" value="Clic para inscribir una tarjeta prepago en el sistema" />
+					</div>
+					<br/>
+					<p:outputPanel id="panelInscribirTarjetas">
+					<p:panel header="Inscripción Tarjeta" rendered="#{pc_AdministrarTarjetaBean.mostrarPanelTarjetas }">
+						<div class="row" style="margin-right: 0px;">
+							<h:outputLabel value="Número Tarjeta*:" for="numeroTarjeta" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:inputText id="numeroTarjeta"  value="#{pc_AdministrarTarjetaBean.numTarjeta }" maxlength="19" disabled="#{pc_AdministrarTarjetaBean.disableCampoNumTarjeta}" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+							<p:ajax event="blur"  listener="#{pc_AdministrarTarjetaBean.consultarTipoYEntidad }" update="panelInscribirTarjetas mensaje" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+							<pe:keyFilter regEx="/[\d]/" preventPaste="false"/>
+							</h:inputText>
+							<pe:tooltip for="numeroTarjeta" value="Ingrese el número de su tarjeta prepago"/>
+							
+							<h:outputLabel value="Entidad :" for="entidad" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:inputText id="entidad"  value="#{pc_AdministrarTarjetaBean.entidadRelacionada }" 
+							 readonly="true" class="col-xs-12 col-sm-3 col-md-3 col-lg-3 fake-disabled" />														
+							<pe:tooltip for="entidad" value="Corresponde a la entidad emisora de la tarjeta prepago"/>
+							
+						</div>
+						
+						<div class="row" style="margin-right: 0px;">
+							<h:outputLabel value="Tipos de Bolsillo:" for="tipoBolsillo" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:selectOneMenu id="tipoBolsillo" value="#{pc_AdministrarTarjetaBean.bolsilloSelected }" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+								<f:selectItem itemLabel="Seleccione uno" itemValue="" noSelectionOption="true"/>
+								<f:selectItems value="#{pc_AdministrarTarjetaBean.listaBolsillos}" var="bolsillo" itemLabel="#{bolsillo.nombre}" itemValue="#{bolsillo.id}"/>
+							</h:selectOneMenu>
+							<pe:tooltip for="tipoBolsillo" value="Tipos de bolsillo asociados a la tarjeta"/>
+						</div>
+						
+						<div class="row" style="margin-right: 0px;">
+							<h:outputLabel value="Tipo Documento*:" for="tipoDocumento" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:selectOneMenu id="tipoDocumento" value="#{pc_AdministrarTarjetaBean.tipoDocSelected }"	class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+								<f:selectItem itemLabel="Seleccione uno" itemValue="" noSelectionOption="true"/>
+								<f:selectItems value="#{pc_AdministrarTarjetaBean.listaTipoDocumento }" var="doc" itemLabel="#{doc.descripcion }" itemValue="#{doc.id }"/>
+							</h:selectOneMenu>
+							<pe:tooltip for="tipoDocumento" value="Seleccione el tipo de documento del usuario asociado a la tarjeta"/>
+							<h:outputLabel value="Número Documento*:" for="numDocumento" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:inputText id="numDocumento" value="#{pc_AdministrarTarjetaBean.campoDocumento }" maxlength="12" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+							<pe:keyFilter regEx="/[a-z0-9]/i" />
+							</h:inputText>
+							<pe:tooltip for="numDocumento" value="Ingrese el número de documento"/>
+						</div>
+						<div class="row" style="margin-right: 0px;">
+							<h:outputLabel value="Nombre de Tarjeta*:" for="nombreTarjeta" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:inputText id="nombreTarjeta" value="#{pc_AdministrarTarjetaBean.campoNombreTarjeta }" maxlength="15" class="col-xs-12 col-sm-3 col-md-3 col-lg-3">
+							<pe:keyFilter regEx="/[a-z0-9\s]/i" />
+							</h:inputText>
+							<pe:tooltip for="nombreTarjeta" value="Ingrese el nombre con el que quiere personalizar la tarjeta. Ejemplo: 'Tarjeta para combustible'"/>
+							<h:outputLabel value="Tipo Tarjeta :" class="col-xs-12 col-sm-3 col-md-3 col-lg-3"/>
+							<h:inputText id="tipoTarjeta" value="#{pc_AdministrarTarjetaBean.campoTipoTarjeta }"  class="col-xs-12 col-sm-3 col-md-3 col-lg-3 fake-disabled"
+							readonly="true"								 />
+							<pe:tooltip for="tipoTarjeta" value="Corresponde al tipo de tarjeta que se va a inscribir"/>
+						</div>
+						<br/>
+						<div class="row">
+							<p:commandButton id="botonGuardar" value="Guardar" action="#{pc_AdministrarTarjetaBean.guardarTarjeta }" update="mensaje botonInscribir panelResultadoConsulta panelInscribirTarjetas" styleClass="col-xs-12 col-sm-2 col-md-2 col-lg-2 btn" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>	
+							<pe:tooltip for="botonGuardar" value="Clic para guardar la información de la inscripción de la tarjeta"/>
+							
+							<p:commandButton id="botonCancelar" value="Cancelar" actionListener="#{pc_AdministrarTarjetaBean.cancelar }" update="botonInscribir panelInscribirTarjetas" styleClass="col-xs-12 col-sm-2 col-md-2 col-lg-2 btn" onstart="statusDialog.show()" oncomplete="statusDialog.hide()"/>
+							<pe:tooltip for="botonCancelar" value="Cancela el proceso de suscripción"/>											
+						</div>
+					</p:panel>
+					</p:outputPanel>
+					<br/>
+					<p:outputPanel id="panelResultadoConsulta">
+						<p:panel rendered="#{not empty pc_AdministrarTarjetaBean.listaResultado}">
+							<div id="no-more-tables">
+								<p:dataTable id="tablaValores" rendered="#{not empty pc_AdministrarTarjetaBean.listaResultado}" rowsPerPageTemplate="5,10,15" value="#{pc_AdministrarTarjetaBean.listaResultado}" var="resultado" styleClass="myTable table-bordered table-striped table-condensed cf" 
+			                                   rows="5" paginator="true" paginatorPosition="bottom" resizableColumns="true" scrollable="true" rowIndexVar="rowIndex"
+			                                    paginatorTemplate="{CurrentPageReport} {FirstPageLink} {PreviousPageLink} {PageLinks} {NextPageLink} {LastPageLink} {RowsPerPageDropdown}">
+			                                    
+			                    	<f:facet name="header" style="text-align:center">Listado de Tarjetas Inscritas</f:facet>
+			                        <br/>
+			                        
+			                        <p:column headerText="Número&lt;br /&gt; Tarjeta" styleClass="Número tarjeta" style="word-wrap: break-word; text-align:left">
+			                            <h:outputText value="#{resultado.tarjetaPrepago.numeroTarjetaEnmascarado}"/>
+			                        </p:column>
+			                        
+			                         <p:column headerText="Entidad" styleClass="Entidad" style=" text-align:left">
+			                            <h:outputText value="#{resultado.tarjetaPrepago.enti.nombre}"/>
+			                        </p:column>
+			                        
+			                        <p:column headerText="Tipo&lt;br /&gt; Documento" styleClass="Tipo Documento" style="word-wrap: break-word; text-align:left">
+			                            <h:outputText value="#{resultado.tipoDocum.descripcion}"/>
+			                        </p:column>
+			                        
+			                        <p:column headerText="No. Documento" styleClass="No. Documento" style=" text-align:left">
+			                            <h:outputText value="#{resultado.tarjetaPrepago.numDocumento}"/>
+			                        </p:column>
+			                        
+			                        <p:column headerText="Nombre&lt;br /&gt; Tarjeta" styleClass="Nombre Tarjeta" style="word-wrap: break-word; text-align:left">
+			                            <h:outputText value="#{resultado.tarjetaPrepago.nombreTarjeta}"/>
+			                        </p:column>
+			                        
+			                        <p:column headerText="Fecha Registro&lt;br /&gt; (DD/MM/AAAA)" styleClass="Fecha Registro (DD/MM/AAAA)"  style="word-wrap: break-word; text-align:left" >
+			                            <h:outputText value="#{resultado.tarjetaPrepago.fechaRegistro}"/>
+			                            <pe:tooltip forSelector=".Fecha Registro" value="Clic para  eliminar una tarjeta"/>
+			                        </p:column>
+			                        
+			                        <p:column headerText="Tipo&lt;br /&gt; Tarjeta" styleClass="Tipo Tarjeta" style="word-wrap: break-word; text-align:left">
+			                            <h:outputText value="#{resultado.tarjetaPrepago.tipTarjeta.nombre}"/>
+			                        </p:column>
+			                        
+			                        <p:column headerText="Editar" styleClass="Editar" style="text-align:left;">                        
+										<p:commandLink process="@this" immediate="true" actionListener="#{pc_AdministrarTarjetaBean.editarTarjeta(resultado) }" update=":formularioAdministrarTarjeta:panelInscribirTarjetas" onstart="statusDialog.show()" oncomplete="statusDialog.hide()">
+											<p:graphicImage value="resoruces/imagenes/modify.png" library="imagenes" name="modify.png" style="center"/>											
+										</p:commandLink>
+										<pe:tooltip forSelector=".Editar" value="Clic para modificar la información de personalización de la tarjeta (Tipo de documento, Número de documento, Nombre de Tarjeta"/>
+									</p:column>
+									
+			                        <p:column headerText="Eliminar" styleClass="Eliminar" style="text-align:left;">
+			                          <p:commandLink process="@this" immediate="true" oncomplete="confirmacionEliminarVar.show(); statusDialog.hide()" actionListener="#{pc_AdministrarTarjetaBean.eliminarTarjeta(resultado) }" update=":formularioAdministrarTarjeta:confirmacionEliminar" onstart="statusDialog.show()">
+			                            <p:graphicImage value="resoruces/imagenes/Close.png" library="imagenes" name="papelera.png" style="width:20px"/>                    			                            
+			                          </p:commandLink>
+			                          <pe:tooltip forSelector=".Eliminar a" value="Clic para  eliminar una tarjeta"/>
+			                        </p:column>
+			                        
+								</p:dataTable>
+							</div>
+						</p:panel>
+				 	</p:outputPanel>				
+				</p:panel>
+				<p:confirmDialog global="true" id="confirmacionEliminar"
+					closeOnEscape="true" closable="true" resizable="false"
+					widgetVar="confirmacionEliminarVar"
+					header="Confirmación de eliminación de suscripción"
+					message="¿Está seguro de eliminar la inscripción de la tarjeta #{pc_AdministrarTarjetaBean.numTarjetaEliminarEnmascarada} sobre el sistema Mov. TrxPrepago Web?">
+
+					<div align="center">
+						<p:panelGrid id="displayConfirmacion" columns="2"
+							styleClass="noBorders">
+							<p:commandButton value="Aceptar" id="condirmarCambios" immediate="true" actionListener="#{pc_AdministrarTarjetaBean.btnConfirmarEliminar }"
+								oncomplete="confirmacionEliminarVar.hide(); statusDialog.hide()" update="panelResultadoConsulta mensaje" onstart="statusDialog.show()"></p:commandButton>
+							<p:commandButton value="Cancelar" id="deshacerCambios"
+								onclick="confirmacionEliminarVar.hide();"></p:commandButton>
+
+						</p:panelGrid>
+					</div>
+				</p:confirmDialog>
+			</h:form>
+			<p:dialog style="z-index: 1010;" widgetVar="statusDialog" modal="true" draggable="false" closable="false" resizable="false" showHeader="false">
+		    	<h:graphicImage name="ajax-loader.gif" library="imagenes"/>
+			</p:dialog>
+		</h:body>
+  </f:view>
+</div>

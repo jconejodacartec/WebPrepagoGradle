@@ -1,0 +1,47 @@
+<!-- jsf:pagecode language="java" location="/src/com/rbm/web/prepago/managedBeans/MensajeBean.java" --><!-- /jsf:pagecode -->
+<div xmlns:ui="http://java.sun.com/jsf/facelets"
+     xmlns:f="http://java.sun.com/jsf/core"
+ 	 xmlns:h="http://java.sun.com/jsf/html" 
+ 	 xmlns:portlet="http://java.sun.com/portlet_2_0"
+ 	 xmlns:p="http://primefaces.org/ui"
+ 	 xmlns:p1="http://primefaces.org/ui/extensions">  
+  
+
+<h:head>
+		<h:outputStylesheet library="css" name="EstilosWebPrepago.css" />
+		<h:outputScript library="primefaces" name="jquery/jquery.js" />
+		<h:outputScript library="javascript" name="funciones.js" />
+		
+		<script src='https://www.google.com/recaptcha/api.js?hl=es'></script>
+		<script language="JavaScript" type="text/javascript">
+			function cargar(){
+				var portletNamespace = "view" + "#{facesContext.externalContext.response.namespace}";
+				var nombreVariable = portletNamespace + ":formularioConsultarCargueMasivo:";	
+				var jqxhr = $.getJSON( "https://api.ipify.org?format=json", function(data) {
+					document.getElementById(nombreVariable+"ipValue").value = data.ip;
+				})	
+			}
+			window.onload = function(){
+				cargar();
+			}
+		</script>
+		<meta http-equiv="Content-Type"
+				content="application/xhtml+xml; charset=UTF-8" />
+	</h:head>
+	
+ 	<f:view>
+		<h:body>
+			<h:form id="formularioConsultarCargueMasivo">
+
+				<p:panel id="panelGeneral" header="Panel general " rendered="true">
+					<p:messages id="mensajes" autoUpdate="true" closable="true"/>
+					<p:panel id="panelFiltros" header="Filtros">
+						<h:inputText value="valor del texto" />
+						<p:commandButton value="limpiar" update="mensajes"/>
+					</p:panel>
+				</p:panel>
+			</h:form>
+		</h:body>
+	</f:view>
+
+</div>

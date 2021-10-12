@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app id="WebApp_ID" version="3.0" xmlns="http://java.sun.com/xml/ns/java2ee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+	<display-name>WebPrepago</display-name>
+	<context-param>
+		<description>
+		Monitors Faces JSP files for modifications and synchronizes a running server with
+the changes without restarting the server. If this parameter is set to false or
+removed from the deployment descriptor, any changes made to Faces JSP files may
+not be seen by the server until it is restarted. This parameter is usually set
+to true while the Faces JSP files are being developed and debugged in order to
+improve the performance of the development environment.</description>
+		<param-name>com.ibm.ws.jsf.JSP_UPDATE_CHECK</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<description>
+		Load JSF runtime when the application server starts up. If this parameter is set to false or removed,
+JSF runtime will be loaded and initialized when the first JSF request is processed.
+This may disable custom JSF extensions, such as factories defined in the project.</description>
+		<param-name>com.ibm.ws.jsf.LOAD_FACES_CONFIG_AT_STARTUP</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<context-param>
+		<description>
+		Load custom tags.</description>
+		<param-name>facelets.LIBRARIES</param-name>
+		<param-value>/WEB-INF/portlet.taglib.xml</param-value>
+	</context-param>
+	<context-param>
+		<param-name>org.apache.myfaces.ERROR_HANDLING</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<param-name>javax.faces.PARTIAL_STATE_SAVING</param-name>
+		<param-value>false</param-value>
+	</context-param>
+	<context-param>
+        <description>State saving method: 'client' or 'server' (=default). See JSF Specification 2.5.2</description>
+        <param-name>javax.faces.STATE_SAVING_METHOD</param-name>
+        <param-value>client</param-value>
+    </context-param>
+	<context-param>  
+		<param-name>primefaces.THEME</param-name>  
+		<param-value>hot-sneaks</param-value>  
+	</context-param>
+	<context-param>
+    	<param-name>org.apache.myfaces.SERIALIZE_STATE_IN_SESSION</param-name>
+    	<param-value>false</param-value>
+	</context-param>
+	<context-param>
+		<description>
+		A human readable string describing where this particular JSF application is
+in the software development lifecycle.
+Valid values are 'Development', 'UnitTest', 'SystemTest' and 'Production'.
+Default is 'Production'.
+This parameter is not available in JSF 1.x.</description>
+		<param-name>javax.faces.PROJECT_STAGE</param-name>
+		<param-value>Development</param-value>
+	</context-param>
+	<context-param>
+		<param-name>primefaces.UPLOADER</param-name>
+		<param-value>commons</param-value>
+	</context-param>
+	<context-param>
+		<param-name>com.ibm.faces.portlet.RENDER_UNHANDLED_FACES_MESSAGES</param-name>
+		<param-value>true</param-value>
+	</context-param>
+	<listener>
+		<listener-class>com.ibm.faces20.portlet.httpbridge.PortletRequestAttributesListener</listener-class>
+	</listener>
+	<listener>
+		<display-name>WebPrepagoListener</display-name>
+		<listener-class>com.rbm.web.prepago.listener.WebPrepagoAplicationListener</listener-class>
+	</listener>
+	<servlet>
+		<servlet-name>Faces Servlet</servlet-name>
+		<servlet-class>javax.faces.webapp.FacesServlet</servlet-class>
+		<load-on-startup>1</load-on-startup>
+		<enabled>true</enabled>
+		<async-supported>false</async-supported>
+	</servlet>
+	<servlet>
+		<servlet-name>SimpleCaptcha</servlet-name>
+		<servlet-class>nl.captcha.servlet.SimpleCaptchaServlet</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>CustomSimpleCaptcha</servlet-name>
+		<servlet-class>com.rbm.web.prepago.captcha.CaptchaGeneratorServlet</servlet-class>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>Faces Servlet</servlet-name>
+		<url-pattern>/wp/*</url-pattern>
+	</servlet-mapping>
+	<servlet-mapping>
+        <servlet-name>CustomSimpleCaptcha</servlet-name>
+        <url-pattern>/customCaptchaImg</url-pattern>
+    </servlet-mapping>
+	<filter>
+		<filter-name>PrimeFaces FileUpload Filter</filter-name>
+	  	<filter-class>org.primefaces.webapp.filter.FileUploadFilter</filter-class>
+	</filter>
+	<filter-mapping>
+        <filter-name>PrimeFaces FileUpload Filter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>	
+	<welcome-file-list>
+		<welcome-file>index.html</welcome-file>
+		<welcome-file>index.htm</welcome-file>
+		<welcome-file>index.jsp</welcome-file>
+		<welcome-file>default.html</welcome-file>
+		<welcome-file>default.htm</welcome-file>
+		<welcome-file>default.jsp</welcome-file>
+	</welcome-file-list>
+</web-app>

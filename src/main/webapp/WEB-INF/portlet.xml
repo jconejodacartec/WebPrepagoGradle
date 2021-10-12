@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlet-app xmlns="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" version="2.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd http://java.sun.com/xml/ns/portlet/portlet-app_2_0.xsd" id="com.ibm.faces20.portlet.FacesPortlet.ca4b64dfa5">
+	<portlet>
+		<portlet-name>RegistrarUsuarioPortlet</portlet-name>
+		<display-name xml:lang="es">RegistrarUsuarioPortlet</display-name>
+		<display-name xml:lang="en">RegistrarUsuarioPortlet</display-name>
+		<display-name>RegistrarUsuarioPortlet</display-name>
+		<portlet-class>com.rbm.web.prepago.portlets.RegistrarUsuarioPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/RegistrarUsuarioView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>es</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.RegistrarUsuarioPortletResource</resource-bundle>
+		<portlet-info>
+			<title>RegistrarUsuarioPortlet</title>
+			<short-title>RegistrarUsuarioPortlet</short-title>
+			<keywords>RegistrarUsuarioPortlet</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>wpAdministrarTarjeta</portlet-name>
+		<display-name xml:lang="en">wpAdministrarTarjeta</display-name>
+		<display-name>wpAdministrarTarjeta</display-name>
+		<portlet-class>com.rbm.web.prepago.portlets.AdministrarTarjetaPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/AdministrarTarjetaView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.AdministrarTarjetaPortletResource</resource-bundle>
+		<portlet-info>
+			<title>AdministrarTarjeta</title>
+			<short-title>AdministrarTarjeta</short-title>
+			<keywords>AdministrarTarjeta</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>wpConsultarMovimientos</portlet-name>
+		<display-name xml:lang="en">wpConsultarMovimientos</display-name>
+		<display-name>wpConsultarMovimientos</display-name>
+		<portlet-class>com.rbm.web.prepago.portlets.ConsultarMovimientosPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/ConsultarMovimientosView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.ConsultarMovimientosPortletResource</resource-bundle>
+		<portlet-info>
+			<title>ConsultarMovimientos</title>
+			<short-title>ConsultarMovimientos</short-title>
+			<keywords>ConsultarMovimientos</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>wpConsultarSaldo</portlet-name>
+		<display-name xml:lang="en">wpConsultarSaldo</display-name>
+		<display-name>wpConsultarSaldo</display-name>
+		<portlet-class>com.rbm.web.prepago.portlets.ConsultarSaldoPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/ConsultarSaldoView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.ConsultarSaldoPortletResource</resource-bundle>
+		<portlet-info>
+			<title>ConsultarSaldo</title>
+			<short-title>ConsultarSaldo</short-title>
+			<keywords>ConsultarSaldo</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>EliminarUsuariosInactivos</portlet-name>
+		<display-name xml:lang="es">EliminarUsuariosInactivos</display-name>
+		<display-name xml:lang="en">EliminarUsuariosInactivos</display-name>
+		<display-name>EliminarUsuariosInactivos</display-name>
+		<portlet-class>com.rbm.web.prepago.portlets.EliminarUsuariosInactivosPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/EliminarUsuariosInactivosView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>en</supported-locale>
+		<supported-locale>es</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.EliminarUsuariosInactivosPortletResource</resource-bundle>
+		<portlet-info>
+			<title>EliminarUsuariosInactivos</title>
+			<short-title>EliminarUsuariosInactivos</short-title>
+			<keywords>EliminarUsuariosInactivos</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>WPAsignarContrasena</portlet-name>
+		<display-name xml:lang="en">WPAsignarContrasena</display-name>
+		<display-name xml:lang="es">WPAsignarContrasena</display-name>
+		<display-name>WPAsignarContrasena</display-name>
+		<portlet-class>com.ibm.faces20.portlet.FacesPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/AsignarContrasenaView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>es</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.WPAsignarContrasenaPortletResource</resource-bundle>
+		<portlet-info>
+			<title>WPAsignarContrasena</title>
+			<short-title>WPAsignarContrasena</short-title>
+			<keywords>WPAsignarContrasena</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>Administrar Parametros WP</portlet-name>
+		<display-name xml:lang="en">Administrar Parametros WP</display-name>
+		<display-name xml:lang="es">Administrar Parametros WP</display-name>
+		<display-name>Administrar Parametros WP</display-name>
+		<portlet-class>com.rbm.web.prepago.portlets.AdministrarParametrosWPPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/AdministrarParametrosWPView.xhtml</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>es</supported-locale>
+		<supported-locale>en</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.AdministrarParametrosWPPortletResource</resource-bundle>
+		<portlet-info>
+			<title>Administrar Parametros WP</title>
+			<short-title>Administrar Parametros WP</short-title>
+			<keywords>Administrar Parametros WP</keywords>
+		</portlet-info>
+	</portlet>
+	<portlet>
+		<portlet-name>modificarInfoPersonal</portlet-name>
+		<display-name>modificarInfoPersonal</display-name>
+		<display-name xml:lang="es">modificarInfoPersonal</display-name>
+		<portlet-class>com.ibm.faces20.portlet.FacesPortlet</portlet-class>
+		<init-param>
+			<name>com.ibm.faces.portlet.page.view</name>
+			<value>/paginas/modificarInfoPersonalView.xhtml</value>
+		</init-param>
+		<init-param>
+			<name>wps.markup</name>
+			<value>html</value>
+		</init-param>
+		<expiration-cache>0</expiration-cache>
+		<supports>
+			<mime-type>text/html</mime-type>
+			<portlet-mode>view</portlet-mode>
+		</supports>
+		<supported-locale>es</supported-locale>
+		<resource-bundle>com.rbm.web.prepago.portlets.nl.ModificarInfoPersonalPortletResource</resource-bundle>
+		<portlet-info>
+			<title>modificarInfoPersonal</title>
+			<short-title>modificarInfoPersonal</short-title>
+			<keywords>modificarInfoPersonal</keywords>
+		</portlet-info>
+	</portlet>
+	<default-namespace>http://WebPrepago/</default-namespace>
+</portlet-app>
