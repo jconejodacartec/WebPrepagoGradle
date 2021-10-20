@@ -9,7 +9,7 @@ import org.pojomatic.annotations.AutoProperty;
 
 	
 	@AutoProperty
-	@XmlRootElement(name = "webPrepago")
+	//@XmlRootElement(name = "webPrepago")
 	@XmlType(propOrder = { 
 			"urlAsignarConstrasena",
 			"urlLogin",

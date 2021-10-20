@@ -24,7 +24,7 @@ import javax.faces.component.html.HtmlPanelGrid;
 import javax.faces.context.FacesContext;
 import javax.faces.event.ActionEvent;
 import javax.servlet.http.HttpServletRequest;
-import javax.xml.bind.annotation.XmlElement;
+//import javax.xml.bind.annotation.XmlElement;
 
 import org.primefaces.component.calendar.Calendar;
 import org.primefaces.component.commandbutton.CommandButton;
@@ -1283,7 +1283,7 @@ public class AsignarContrasenaBean extends PageCodeBase implements Serializable{
 		return abreviatura;
 	}
 
-	@XmlElement(name="abreviatura")
+	//@XmlElement(name="abreviatura")
 	public void setAbreviatura(String abreviatura) {
 		this.abreviatura = abreviatura;
 	}

@@ -87,7 +87,7 @@ public class RegistrarUsuarioBean extends PageCodeBase implements Serializable{
 	protected HtmlInputText nombre;
 	protected HtmlInputText apellido;
 	protected HtmlInputText correo;
-	protected HtmlInputText confirmacionCorreo;
+	protected HtmlInputText confirmaciónCorreo;
 	protected HtmlInputText numeroTelefono;
 	protected HtmlInputText respuesta1;
 	protected HtmlInputText pregunta2;
@@ -506,11 +506,11 @@ public class RegistrarUsuarioBean extends PageCodeBase implements Serializable{
 		return correo;
 	}
 
-	protected HtmlInputText getConfirmacionCorreo() {
-		if (confirmacionCorreo == null) {
-			confirmacionCorreo = (HtmlInputText) findComponentInRoot("confirmaciónCorreo");
+	protected HtmlInputText getConfirmaciónCorreo() {
+		if (confirmaciónCorreo == null) {
+			confirmaciónCorreo = (HtmlInputText) findComponentInRoot("confirmaciónCorreo");
 		}
-		return confirmacionCorreo;
+		return confirmaciónCorreo;
 	}
 
 	protected HtmlInputText getNumeroTelefono() {

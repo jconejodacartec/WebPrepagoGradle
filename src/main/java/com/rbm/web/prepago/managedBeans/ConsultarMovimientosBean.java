@@ -354,10 +354,10 @@ public class ConsultarMovimientosBean extends PageCodeBase {
 			mensaje += " Fecha Final,";
 			valida = false;
 		}
-		if (this.bolsilloSelected == null || this.bolsilloSelected.isEmpty()) {
-        	mensaje += "Bolsillo";
-        	valida = false;
-        }
+		if (this.bolsilloSelected == null) {
+			mensaje += " Bolsillo seleccionado,";
+			valida = false;
+		}
 		
 						
 		if (!valida) {
